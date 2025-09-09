@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "name": "beautiful-nextjs-webapp",
+  "builds": [
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/frontend/$1"
+    }
+  ],
+  "outputDirectory": "frontend/.next",
+  "framework": "nextjs",
+  "installCommand": "cd frontend && npm install",
+  "buildCommand": "cd frontend && npm run build",
+  "devCommand": "cd frontend && npm run dev",
+  "functions": {
+    "frontend/src/app/**/*.{js,ts,jsx,tsx}": {
+      "runtime": "nodejs18.x"
+    }
+  }
+}
