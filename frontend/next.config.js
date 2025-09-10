@@ -1,8 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    appDir: true,
-  },
+  // No static export - deploy as regular Next.js app
 }
 
 module.exports = nextConfig
