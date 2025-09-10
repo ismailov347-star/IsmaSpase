@@ -62,10 +62,10 @@ db.serialize(() => {
     if (row.count === 0) {
       // Добавляем тестовые темы
       const topics = [
-        { title: 'Основы программирования', description: 'Изучите основные концепции программирования' },
+        { title: 'Практикум «СИСТЕМА ЛЁГКОГО КОНТЕНТА»', description: 'Короткая, понятная система для роста блога и стабильного контента.' },
         { title: 'Web-разработка', description: 'Создание современных веб-приложений' },
         { title: 'Базы данных', description: 'Работа с базами данных и SQL' },
-        { title: 'Практикум', description: 'Практические задания и проекты' }
+        { title: 'Основы программирования', description: 'Изучите основные концепции программирования' }
       ]
 
       topics.forEach((topic, index) => {
@@ -82,27 +82,27 @@ db.serialize(() => {
             const topicId = this.lastID
             let lessons = []
             
-            if (index === 3) { // Практикум - 4 урока с YouTube видео
+            if (index === 0) { // Практикум «СИСТЕМА ЛЁГКОГО КОНТЕНТА» - 4 урока
               lessons = [
                 {
-                  title: 'Урок 1: Введение в практикум',
-                  description: 'Знакомство с практическими заданиями',
-                  video_url: 'https://www.youtube.com/watch?v=YOUTUBE_ID_1' // Замените на реальный ID
+                  title: 'УПАКОВКА БЛОГА',
+                  description: 'как оформить профиль так, чтобы подписывались и оставались.',
+                  video_url: 'https://www.youtube.com/embed/XXXX?rel=0'
                 },
                 {
-                  title: 'Урок 2: Основы работы',
-                  description: 'Изучаем базовые принципы',
-                  video_url: 'https://www.youtube.com/watch?v=YOUTUBE_ID_2' // Замените на реальный ID
+                  title: 'СИСТЕМА ИДЕЙ «КОНТЕНТ БЕЗ СТУПОРА»',
+                  description: 'как генерировать идеи каждый день и не выгорать.',
+                  video_url: 'https://www.youtube.com/embed/YYYY?rel=0'
                 },
                 {
-                  title: 'Урок 3: Практические примеры',
-                  description: 'Разбираем реальные кейсы',
-                  video_url: 'https://www.youtube.com/watch?v=YOUTUBE_ID_3' // Замените на реальный ID
+                  title: 'ТЕКСТОВЫЕ РИЛС: ФОРМУЛА ЗАХВАТА ВНИМАНИЯ',
+                  description: 'структура заголовка и подача, чтобы ролики брали охваты.',
+                  video_url: 'https://www.youtube.com/embed/ZZZZ?rel=0'
                 },
                 {
-                  title: 'Урок 4: Итоговый проект',
-                  description: 'Создаем финальный проект',
-                  video_url: 'https://www.youtube.com/watch?v=YOUTUBE_ID_4' // Замените на реальный ID
+                  title: 'ПУБЛИКАЦИИ-КАРУСЕЛИ «ЛИСТАЙ, НЕ ОТПУСКАЙ»',
+                  description: 'сценарии, ритм и оформление каруселей, которые дочитывают.',
+                  video_url: 'https://www.youtube.com/embed/WWWW?rel=0'
                 }
               ]
             } else {
