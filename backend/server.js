@@ -305,7 +305,7 @@ app.use((req, res) => {
 })
 
 // Запуск сервера
-app.listen(PORT, () => {
+app.listen(PORT, 'localhost', () => {
   console.log(`🚀 Backend сервер запущен на порту ${PORT}`)
   console.log(`📊 API доступно по адресу: http://localhost:${PORT}/api`)
   console.log(`💾 База данных: ${dbPath}`)
