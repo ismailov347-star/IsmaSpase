@@ -1,40 +1,15 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, Orbitron } from 'next/font/google'
 import './globals.css'
-import '@/styles/telegram.css'
-import { AppNavBar } from '@/components/ui/app-navbar'
-import { TelegramWebApp } from '@/components/telegram-webapp'
+import { FlickeringGrid } from '@/components/ui/flickering-grid'
 
 const inter = Inter({ subsets: ['latin'] })
+const orbitron = Orbitron({ subsets: ['latin'], variable: '--font-orbitron' })
 
 export const metadata: Metadata = {
-  title: 'ОБУЧАЮЩАЯ ПЛАТФОРМА | IsmaSpace',
-  description: 'Telegram обучающая платформа для изучения различных тем. Интерактивные курсы, практикум и персонализированное обучение.',
-  keywords: 'обучение, курсы, telegram, образование, практикум, IsmaSpace',
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: 'black-translucent',
-    title: 'IsmaSpace',
-  },
-  manifest: '/manifest.json',
-  robots: 'index, follow',
-  openGraph: {
-    title: 'ОБУЧАЮЩАЯ ПЛАТФОРМА | IsmaSpace',
-    description: 'Telegram обучающая платформа для изучения различных тем',
-    type: 'website',
-    locale: 'ru_RU',
-  },
+  title: 'Платформа обучения',
+  description: 'Образовательная платформа с интерактивными уроками',
 }
-
-export const viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-  viewportFit: 'cover',
-}
-
-export const themeColor = '#3b82f6'
 
 export default function RootLayout({
   children,
@@ -42,19 +17,57 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="ru" className="h-full" suppressHydrationWarning>
-      <head>
-        <meta name="format-detection" content="telephone=no" />
-        <meta name="application-name" content="IsmaSpace" />
-        <meta name="msapplication-TileColor" content="#3b82f6" />
-        <meta name="msapplication-tap-highlight" content="no" />
-        <meta name="telegram-web-app" content="true" />
-        <script src="https://telegram.org/js/telegram-web-app.js"></script>
-      </head>
-      <body className={`${inter.className} h-full`}>
-        <TelegramWebApp />
-        <AppNavBar />
-        {children}
+    <html lang="ru">
+      <body className={`${inter.className} ${orbitron.variable}`}>
+        <div className="min-h-screen relative">
+          <div className="relative min-h-screen bg-black">
+            <FlickeringGrid
+               className="fixed inset-0 z-0"
+               squareSize={3}
+               gridGap={4}
+               color="rgb(64, 64, 64)"
+               maxOpacity={0.6}
+               flickerChance={0.4}
+             />
+            <div className="relative z-10 min-h-screen">
+              <nav className="bg-black/20 backdrop-blur-md border-b border-cyan-400/20">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <div className="flex justify-between items-center h-16">
+                    <div className="flex items-center space-x-8">
+                      <div className="text-xl font-bold text-white font-[family-name:var(--font-orbitron)]">
+                        IsmaSpace
+                      </div>
+                      <div className="hidden md:flex space-x-6">
+                         <a href="/" className="group flex items-center space-x-2 px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-400/30 hover:border-cyan-300/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-400/25">
+                           <div className="relative">
+                             <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full blur-sm opacity-0 group-hover:opacity-75 transition-opacity duration-300"></div>
+                             <svg className="relative w-5 h-5 text-cyan-400 group-hover:text-white transition-colors duration-300" fill="currentColor" viewBox="0 0 20 20">
+                               <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+                             </svg>
+                           </div>
+                           <span className="text-cyan-400 group-hover:text-white transition-colors duration-300 font-medium">Домой</span>
+                         </a>
+                       </div>
+                    </div>
+                    <div className="md:hidden">
+                       <a href="/" className="group p-2 rounded-lg bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-400/30 hover:border-cyan-300/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-400/25">
+                         <div className="relative">
+                           <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full blur-sm opacity-0 group-hover:opacity-75 transition-opacity duration-300"></div>
+                           <svg className="relative w-6 h-6 text-cyan-400 group-hover:text-white transition-colors duration-300" fill="currentColor" viewBox="0 0 20 20">
+                             <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+                           </svg>
+                         </div>
+                       </a>
+                     </div>
+                  </div>
+                </div>
+              </nav>
+              <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+                {children}
+              </main>
+            </div>
+          </div>
+        </div>
       </body>
     </html>
   )

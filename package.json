@@ -1,0 +1,37 @@
+{
+  "name": "learning-platform",
+  "version": "1.0.0",
+  "description": "Платформа обучения с веб-интерфейсом и Telegram ботом",
+  "main": "index.js",
+  "scripts": {
+    "install-all": "cd frontend && npm install && cd ../backend && npm install && cd ../telegram-bot && npm install",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\" \"npm run dev:bot\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:bot": "cd telegram-bot && npm run dev",
+    "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\" \"npm run start:bot\"",
+    "start:frontend": "cd frontend && npm start",
+    "start:backend": "cd backend && npm start",
+    "start:bot": "cd telegram-bot && npm start",
+    "build": "cd frontend && npm run build",
+    "init-db": "cd backend && npm run init-db"
+  },
+  "keywords": [
+    "learning",
+    "education",
+    "telegram-bot",
+    "nextjs",
+    "nodejs",
+    "express",
+    "sqlite"
+  ],
+  "author": "Learning Platform Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  }
+}
