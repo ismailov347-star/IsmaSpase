@@ -1,18 +1,20 @@
 const { Telegraf, Markup } = require('telegraf')
 require('dotenv').config()
 
+console.log('🔗 Используемый URL:', process.env.API_BASE_URL)
+
 const bot = new Telegraf(process.env.BOT_TOKEN)
 
 // Главная клавиатура (переиспользуется)
 const mainKeyboard = Markup.keyboard([
-  [Markup.button.webApp('Открыть платформу', 'https://example.com/app')],
+  [Markup.button.webApp('Открыть платформу', process.env.API_BASE_URL)],
   ['Главная', 'Помощь'],
   ['Перезапустить']
 ]).resize();
 
 // Инлайн-кнопка "Открыть"
 const openInlineKb = Markup.inlineKeyboard([
-  Markup.button.webApp('Открыть', 'https://example.com/app')
+  Markup.button.webApp('Открыть', process.env.API_BASE_URL)
 ])
 
 // Функция установки Chat Menu Button для пользователя
@@ -21,7 +23,7 @@ const setChatMenuButton = async (chatId) => {
     await bot.telegram.setChatMenuButton(chatId, {
       type: 'web_app',
       text: 'Открыть приложение',
-      web_app: { url: 'https://example.com/app' }
+      web_app: { url: process.env.API_BASE_URL }
     })
     console.log(`✅ Chat Menu Button установлена для чата ${chatId}`)
   } catch (err) {
@@ -33,7 +35,7 @@ const setChatMenuButton = async (chatId) => {
 bot.telegram.setChatMenuButton(undefined, {
   type: 'web_app',
   text: 'Открыть приложение',
-  web_app: { url: 'https://example.com/app' }
+  web_app: { url: process.env.API_BASE_URL }
 }).then(() => {
   console.log('🌐 Глобальная Chat Menu Button установлена')
 }).catch(err => {
@@ -86,7 +88,7 @@ bot.start(async (ctx) => {
             { 
                 reply_markup: {
                     inline_keyboard: [[
-                        { text: 'Открыть', web_app: { url: 'https://example.com/app' } }
+                        { text: 'Открыть', web_app: { url: process.env.API_BASE_URL } }
                     ]]
                 },
                 disable_web_page_preview: true 
@@ -114,7 +116,7 @@ bot.on('message', async (ctx, next) => {
                 { 
                     reply_markup: {
                         inline_keyboard: [[
-                            { text: 'Открыть', web_app: { url: 'https://example.com/app' } }
+                            { text: 'Открыть', web_app: { url: process.env.API_BASE_URL } }
                         ]]
                     },
                     disable_web_page_preview: true 
