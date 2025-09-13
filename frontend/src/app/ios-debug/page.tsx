@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTelegramNavigation } from '@/hooks/useTelegramNavigation'
 
 interface DiagnosticInfo {
   timestamp: string
