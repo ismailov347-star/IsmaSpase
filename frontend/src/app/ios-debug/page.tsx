@@ -84,9 +84,19 @@ export default function IOSDebugPage() {
         addLog('✅ Telegram скрипт найден в DOM')
         addLog(`📄 Скрипт URL: ${telegramScript.src}`)
         
-        // Проверяем статус загрузки
-        if (telegramScript.readyState) {
-          addLog(`📊 Статус скрипта: ${telegramScript.readyState}`)
+        // Проверяем статус загрузки через события
+        if (telegramScript.onload !== null) {
+          addLog('📊 Скрипт поддерживает события загрузки')
+        }
+        
+        // Если скрипт еще не загружен, добавляем обработчики событий
+        if (!telegramScript.onload) {
+          telegramScript.addEventListener('load', () => {
+            addLog('✅ Telegram script loaded')
+          })
+          telegramScript.addEventListener('error', () => {
+            addLog('❌ Telegram script failed')
+          })
         }
       } else {
         addLog('❌ Telegram скрипт НЕ найден в DOM')
