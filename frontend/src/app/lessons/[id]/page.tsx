@@ -1,9 +1,9 @@
 'use client'
 
+import { useParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
 import { ButtonCta } from '@/components/ui/button-shiny'
-import { useTelegramNavigation } from '@/hooks/useTelegramNavigation'
+import Link from 'next/link'
 
 interface Lesson {
   id: number
@@ -17,8 +17,6 @@ interface Lesson {
 
 export default function LessonPage() {
   const params = useParams()
-  const router = useRouter()
-  const { navigate, openExternalLink } = useTelegramNavigation()
   const [lesson, setLesson] = useState<Lesson | null>(null)
   const [loading, setLoading] = useState(true)
   const [videoLoaded, setVideoLoaded] = useState(false)
@@ -120,10 +118,11 @@ export default function LessonPage() {
     return (
       <div className="text-center py-12">
         <h2 className="text-2xl font-bold text-white mb-4">Урок не найден</h2>
-        <ButtonCta 
-          label="Вернуться на главную" 
-          onNavigate={() => navigate('/')}
-        />
+        <Link href="/">
+          <ButtonCta 
+            label="Вернуться на главную"
+          />
+        </Link>
       </div>
     )
   }
@@ -132,11 +131,12 @@ export default function LessonPage() {
     <div className="px-4 py-8 max-w-4xl mx-auto">
       {/* Навигация */}
       <div className="mb-6">
-        <ButtonCta 
-          label="← Назад" 
-          className="mb-4" 
-          onNavigate={() => navigate(`/topics/${lesson.topic_id}`)}
-        />
+        <Link href={`/topics/${lesson.topic_id}`} className="block focus:outline-none">
+          <ButtonCta 
+            label="← Назад" 
+            className="mb-4"
+          />
+        </Link>
       </div>
 
       {/* Заголовок урока */}
@@ -194,11 +194,11 @@ export default function LessonPage() {
               <ButtonCta
                 label="Открыть в YouTube"
                 className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 text-sm"
-                onNavigate={() => {
+onClick={() => {
                   // Конвертируем embed URL в обычный YouTube URL
                   const videoId = lesson.video_url.match(/embed\/([^?]+)/)?.[1]
                   if (videoId) {
-                    openExternalLink(`https://www.youtube.com/watch?v=${videoId}`)
+                    window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank')
                   }
                 }}
               />
@@ -225,11 +225,12 @@ export default function LessonPage() {
 
       {/* Навигация между уроками */}
       <div className="flex justify-center">
-        <ButtonCta 
-          label="Вернуться к списку уроков" 
-          icon="←" 
-          onNavigate={() => navigate(`/topics/${lesson.topic_id}`)}
-        />
+        <Link href={`/topics/${lesson.topic_id}`} className="block focus:outline-none">
+          <ButtonCta 
+            label="Вернуться к списку уроков" 
+            icon="←"
+          />
+        </Link>
       </div>
     </div>
   )

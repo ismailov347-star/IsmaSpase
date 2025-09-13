@@ -39,15 +39,24 @@ export const useTelegramNavigation = () => {
   const navigate = useCallback((href: string) => {
     const isMobile = isMobileDevice()
     const isTelegram = isTelegramWebApp()
+    const timestamp = new Date().toISOString()
+    const userAgent = typeof window !== 'undefined' ? window.navigator.userAgent : 'unknown'
+    const currentUrl = typeof window !== 'undefined' ? window.location.href : 'unknown'
     
     console.log('🧭 Navigation attempt:', {
       href,
       isTelegram,
       isMobile,
-      userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'unknown',
-      timestamp: new Date().toISOString(),
+      userAgent,
+      currentUrl,
+      timestamp,
       routerAvailable: !!router
     })
+    
+    if (!href) {
+      console.error('❌ Navigate: href is empty')
+      return
+    }
     
     try {
       // Проверяем, является ли это внутренним путем (без протокола/домена)
@@ -88,6 +97,7 @@ export const useTelegramNavigation = () => {
       console.log('🔗 External link detected, using openExternalLink')
       // Внешние ссылки - используем openExternalLink
       openExternalLink(href)
+      console.log('✅ External link navigation initiated')
     } catch (error) {
       console.error('❌ Navigation error:', error)
       console.error('❌ Error details:', {
@@ -101,6 +111,7 @@ export const useTelegramNavigation = () => {
         console.log('🔄 Fallback: using window.location.href')
         try {
           window.location.href = href
+          console.log('✅ Fallback navigation successful')
         } catch (fallbackError) {
           console.error('❌ Even fallback failed:', fallbackError)
         }

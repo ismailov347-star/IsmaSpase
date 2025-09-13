@@ -32,6 +32,7 @@ export default function IOSDebugPage() {
   const [currentUrl, setCurrentUrl] = useState('N/A')
   const [networkStatus, setNetworkStatus] = useState('N/A')
   const router = useRouter()
+  const { navigate, isMobileDevice } = useTelegramNavigation()
 
   const addLog = (message: string) => {
     const timestamp = new Date().toLocaleTimeString()
@@ -239,12 +240,39 @@ export default function IOSDebugPage() {
   }, [])
 
   const handleNavigation = (path: string) => {
+    const isMobile = isMobileDevice()
+    
     addLog(`🧭 Навигация на: ${path}`)
+    addLog(`📱 User Agent: ${navigator.userAgent}`)
+    addLog(`🌐 Current URL: ${window.location.href}`)
+    addLog(`📱 Is mobile device: ${isMobile}`)
+    
     try {
+      // Проверяем доступность router
+      if (!router) {
+        addLog('❌ Router недоступен')
+        return
+      }
+      
+      addLog('🚀 Вызываем router.push...')
       router.push(path)
-      addLog('✅ Навигация успешна')
+      addLog('✅ router.push завершен')
+      
+      // Для мобильных устройств увеличиваем задержку
+      const delay = isMobile ? 1000 : 500
+      setTimeout(() => {
+        addLog(`📍 URL после навигации: ${window.location.href}`)
+        if (window.location.pathname === path) {
+          addLog('✅ Навигация успешна - URL изменился')
+        } else {
+          addLog('⚠️ URL не изменился после навигации')
+        }
+      }, delay)
+      
     } catch (error) {
       addLog(`❌ Ошибка навигации: ${error}`)
+      addLog(`❌ Тип ошибки: ${typeof error}`)
+      addLog(`❌ Stack trace: ${error instanceof Error ? error.stack : 'Нет stack trace'}`)
     }
   }
 
@@ -292,6 +320,29 @@ export default function IOSDebugPage() {
             className="px-4 py-2 bg-green-600 rounded hover:bg-green-700 transition-colors"
           >
             📚 Тема 1
+          </button>
+          <button 
+            onClick={() => {
+              const isMobile = isMobileDevice()
+              
+              addLog('🧪 Тестируем кнопку "Изучать тему"')
+              addLog(`📱 Is mobile device: ${isMobile}`)
+              
+              // Имитируем клик по кнопке на главной странице
+              handleNavigation('/')
+              
+              // Для мобильных устройств увеличиваем задержки
+              const firstDelay = isMobile ? 200 : 100
+              const secondDelay = isMobile ? 3000 : 2000
+              
+              setTimeout(() => {
+                addLog(`⏱️ Через ${secondDelay/1000} секунды попробуем перейти к теме`)
+                setTimeout(() => handleNavigation('/topics/1'), secondDelay)
+              }, firstDelay)
+            }}
+            className="px-4 py-2 bg-purple-600 rounded hover:bg-purple-700 transition-colors"
+          >
+            🧪 Тест "Изучать тему"
           </button>
           <button 
             onClick={() => handleNavigation('/test')}

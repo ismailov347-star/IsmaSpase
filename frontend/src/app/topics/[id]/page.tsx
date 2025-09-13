@@ -5,6 +5,11 @@ import { useParams, useRouter } from 'next/navigation'
 import { ButtonCta } from '@/components/ui/button-shiny'
 import { useTelegramNavigation } from '@/hooks/useTelegramNavigation'
 
+// Экспорты для исправления проблем с мобильной навигацией
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+export const dynamicParams = true
+
 interface Lesson {
   id: number
   title: string
@@ -34,7 +39,12 @@ export default function TopicPage() {
   }, [params.id])
 
   const fetchTopicData = async () => {
-    const topicId = params.id as string
+    const topicId = params?.id ? decodeURIComponent(params.id as string) : null
+    
+    if (!topicId) {
+      setLoading(false)
+      return
+    }
     
     // Статические данные для темы 1
     const staticTopicData = {
@@ -44,7 +54,8 @@ export default function TopicPage() {
     }
     
     // Если это тема 1, используем статические данные (без try-catch для статических данных)
-    if (parseInt(topicId) === 1) {
+    const numericId = parseInt(topicId)
+    if (numericId === 1) {
       setTopic(staticTopicData)
       // Устанавливаем статические уроки для темы 1
       setLessons([
