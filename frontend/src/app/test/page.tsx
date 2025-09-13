@@ -26,8 +26,6 @@ export default function TestPage() {
         const tg = window.Telegram.WebApp
         setTelegramData({
           isAvailable: true,
-          isExpanded: tg.isExpanded,
-          viewportHeight: tg.viewportHeight,
           initData: tg.initData,
           user: tg.initDataUnsafe?.user,
           platform: tg.platform || 'unknown'
