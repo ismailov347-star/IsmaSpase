@@ -4,6 +4,8 @@
   "installCommand": "npm install && cd frontend && npm install",
   "devCommand": "cd frontend && npm run dev",
   "framework": "nextjs",
+  "cleanUrls": true,
+  "trailingSlash": false,
   "rewrites": [
     {
       "source": "/api/(.*)",
@@ -12,6 +14,17 @@
     {
       "source": "/(.*)",
       "destination": "/$1"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
     }
   ]
 }
