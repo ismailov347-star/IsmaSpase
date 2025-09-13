@@ -15,20 +15,6 @@ export function Navigation() {
           </div>
           <div className="flex items-center space-x-4">
             <HomeButton />
-            <button
-              onClick={() => navigate('/mobile-test')}
-              className="px-3 py-1 text-xs bg-green-600 hover:bg-green-700 text-white rounded transition-colors"
-              title="Mobile Test"
-            >
-              📱 Тест
-            </button>
-            <button
-              onClick={() => navigate('/ios-debug')}
-              className="px-3 py-1 text-xs bg-yellow-600 hover:bg-yellow-700 text-white rounded transition-colors"
-              title="iOS Debug"
-            >
-              🔍 Debug
-            </button>
           </div>
         </div>
       </div>
