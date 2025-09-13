@@ -47,7 +47,7 @@ export default function MobileTestPage() {
           addLog('❌ Навигация не сработала')
         }
         setIsTestRunning(false)
-      }, isMobileDevice ? 2000 : 1000)
+      }, isMobileDevice() ? 2000 : 1000)
       
     } catch (error) {
       addLog(`❌ Ошибка: ${error}`)
@@ -82,8 +82,8 @@ export default function MobileTestPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div className="p-4 bg-gray-800 rounded-lg">
               <h3 className="font-semibold mb-2">📱 Устройство</h3>
-              <p className={`text-sm ${isMobileDevice ? 'text-green-400' : 'text-yellow-400'}`}>
-                {isMobileDevice ? 'Мобильное' : 'Десктоп'}
+              <p className={`text-sm ${isMobileDevice() ? 'text-green-400' : 'text-yellow-400'}`}>
+                {isMobileDevice() ? 'Мобильное' : 'Десктоп'}
               </p>
             </div>
             
