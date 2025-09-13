@@ -1,68 +1,15 @@
 'use client'
 
 import { useEffect } from 'react'
-
-declare global {
-  interface Window {
-    Telegram?: {
-      WebApp: {
-        ready: () => void
-        expand: () => void
-        MainButton: {
-          text: string
-          color: string
-          textColor: string
-          isVisible: boolean
-          isActive: boolean
-          setText: (text: string) => void
-          onClick: (callback: () => void) => void
-          show: () => void
-          hide: () => void
-        }
-        BackButton: {
-          isVisible: boolean
-          onClick: (callback: () => void) => void
-          show: () => void
-          hide: () => void
-        }
-        themeParams: {
-          bg_color?: string
-          text_color?: string
-          hint_color?: string
-          link_color?: string
-          button_color?: string
-          button_text_color?: string
-        }
-        colorScheme: 'light' | 'dark'
-        isExpanded: boolean
-        viewportHeight: number
-        viewportStableHeight: number
-        initData: string
-        initDataUnsafe: {
-          user?: {
-            id: number
-            first_name: string
-            last_name?: string
-            username?: string
-            language_code?: string
-          }
-        }
-        platform: string
-        version: string
-        disableVerticalSwipes: () => void
-        close: () => void
-      }
-    }
-  }
-}
+import { readTG, getTG } from '@/lib/tg'
 
 export default function TelegramWebApp({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       // Ждем загрузки Telegram WebApp скрипта
       const initTelegramWebApp = () => {
-        if (window.Telegram?.WebApp) {
-          const tg = window.Telegram.WebApp
+        const tg = getTG()
+        if (tg) {
           
           try {
             console.log('Начинаем инициализацию Telegram WebApp...')
@@ -84,33 +31,36 @@ export default function TelegramWebApp({ children }: { children: React.ReactNode
             }
             
             // Настройка темы через CSS переменные вместо классов
-            if (tg.themeParams) {
+            const { colorScheme, themeParams } = readTG()
+            if (themeParams) {
               const root = document.documentElement
-              if (tg.colorScheme === 'dark') {
+              if (colorScheme === 'dark') {
                 root.style.setProperty('--tg-theme', 'dark')
-                root.style.setProperty('--tg-bg-color', tg.themeParams.bg_color || '#000000')
-                root.style.setProperty('--tg-text-color', tg.themeParams.text_color || '#ffffff')
+                root.style.setProperty('--tg-bg-color', themeParams.bg_color || '#000000')
+                root.style.setProperty('--tg-text-color', themeParams.text_color || '#ffffff')
               } else {
                 root.style.setProperty('--tg-theme', 'light')
-                root.style.setProperty('--tg-bg-color', tg.themeParams.bg_color || '#ffffff')
-                root.style.setProperty('--tg-text-color', tg.themeParams.text_color || '#000000')
+                root.style.setProperty('--tg-bg-color', themeParams.bg_color || '#ffffff')
+                root.style.setProperty('--tg-text-color', themeParams.text_color || '#000000')
               }
-              console.log('✓ Тема настроена:', tg.colorScheme)
+              console.log('✓ Тема настроена:', colorScheme)
             }
             
             // Настройка viewport для мобильных устройств через CSS переменные
-            if (tg.platform === 'ios' || tg.platform === 'android') {
+            const { platform, viewportHeight } = readTG()
+            if (platform === 'ios' || platform === 'android') {
               document.documentElement.style.setProperty('--tg-mobile', '1')
               
               // Дополнительные настройки для iOS
-              if (tg.platform === 'ios') {
+              if (platform === 'ios') {
                 // Предотвращаем bounce эффект
                 document.body.style.overscrollBehavior = 'none'
                 document.documentElement.style.overscrollBehavior = 'none'
                 
                 // Фиксируем высоту для iOS
                 const setIOSHeight = () => {
-                  const vh = tg.viewportStableHeight || tg.viewportHeight || window.innerHeight
+                  const { viewportHeight } = readTG()
+                  const vh = (tg as any)?.viewportStableHeight || viewportHeight || window.innerHeight
                   document.documentElement.style.setProperty('--vh', `${vh * 0.01}px`)
                 }
                 setIOSHeight()
@@ -124,14 +74,15 @@ export default function TelegramWebApp({ children }: { children: React.ReactNode
               }
             }
             
+            const { platform: logPlatform, colorScheme: logColorScheme, isExpanded, viewportHeight: logViewportHeight, user } = readTG()
             console.log('✅ Telegram WebApp успешно инициализирован:', {
-              platform: tg.platform,
-              version: tg.version,
-              colorScheme: tg.colorScheme,
-              isExpanded: tg.isExpanded,
-              viewportHeight: tg.viewportHeight,
-              viewportStableHeight: tg.viewportStableHeight,
-              user: tg.initDataUnsafe?.user
+              platform: logPlatform,
+              version: (tg as any)?.version,
+              colorScheme: logColorScheme,
+              isExpanded,
+              viewportHeight: logViewportHeight,
+              viewportStableHeight: (tg as any)?.viewportStableHeight,
+              user
             })
           } catch (error) {
             console.error('❌ Ошибка инициализации Telegram WebApp:', error)
@@ -142,12 +93,12 @@ export default function TelegramWebApp({ children }: { children: React.ReactNode
       }
       
       // Проверяем, загружен ли уже скрипт
-      if (window.Telegram?.WebApp) {
+      if (getTG()) {
         initTelegramWebApp()
       } else {
         // Ждем загрузки скрипта
         const checkTelegram = setInterval(() => {
-          if (window.Telegram?.WebApp) {
+          if (getTG()) {
             clearInterval(checkTelegram)
             initTelegramWebApp()
           }

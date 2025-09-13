@@ -5,11 +5,6 @@ import { useParams, useRouter } from 'next/navigation'
 import { ButtonCta } from '@/components/ui/button-shiny'
 import { useTelegramNavigation } from '@/hooks/useTelegramNavigation'
 
-// Экспорты для исправления проблем с мобильной навигацией
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
-export const dynamicParams = true
-
 interface Lesson {
   id: number
   title: string

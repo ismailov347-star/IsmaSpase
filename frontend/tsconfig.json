@@ -5,6 +5,7 @@
       "dom.iterable",
       "es6"
     ],
+    "types": ["@twa-dev/types"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,

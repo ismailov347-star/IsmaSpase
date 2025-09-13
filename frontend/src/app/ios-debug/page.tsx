@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTelegramNavigation } from '@/hooks/useTelegramNavigation'
+import { readTG, getTG } from '@/lib/tg'
 
 interface DiagnosticInfo {
   timestamp: string
@@ -126,14 +127,13 @@ export default function IOSDebugPage() {
           addLog('✅ Telegram объект доступен')
         }
         
-        if (!webAppAvailable) {
+        const tg = getTG()
+        if (!tg) {
           errors.push('Telegram.WebApp недоступен')
           addLog('❌ Telegram.WebApp недоступен')
         } else {
           addLog('✅ Telegram.WebApp доступен')
         }
-        
-        const tg = (window as any)?.Telegram?.WebApp
         
         // Проверяем доступность методов
         if (tg) {
@@ -148,22 +148,24 @@ export default function IOSDebugPage() {
           })
         }
         
+        const { platform, colorScheme, isExpanded, viewportHeight, initData, user, themeParams } = readTG()
+        
         const info: DiagnosticInfo = {
           timestamp: new Date().toISOString(),
           telegramAvailable,
-          webAppAvailable,
+          webAppAvailable: !!tg,
           scriptLoaded,
-          platform: tg?.platform || 'unknown',
-          version: tg?.version || 'unknown',
-          colorScheme: tg?.colorScheme || 'unknown',
-          viewportHeight: tg?.viewportHeight || 0,
-          viewportStableHeight: tg?.viewportStableHeight || 0,
-          isExpanded: tg?.isExpanded || false,
+          platform,
+          version: (tg as any)?.version || 'unknown',
+          colorScheme: colorScheme || 'unknown',
+          viewportHeight,
+          viewportStableHeight: (tg as any)?.viewportStableHeight || 0,
+          isExpanded,
           userAgent: userAgent,
           url: currentUrl,
-          initData: tg?.initData || '',
-          user: tg?.initDataUnsafe?.user || null,
-          themeParams: tg?.themeParams || null,
+          initData,
+          user,
+          themeParams,
           networkStatus: networkStatus,
           errors
         }
@@ -192,7 +194,7 @@ export default function IOSDebugPage() {
           }
         }
         
-        if (tg && webAppAvailable) {
+        if (tg) {
           try {
             addLog('🚀 Пытаемся инициализировать WebApp...')
             tg.ready()
@@ -210,7 +212,8 @@ export default function IOSDebugPage() {
             
             // Дополнительная информация после инициализации
             setTimeout(() => {
-              addLog(`📊 После инициализации - высота: ${tg.viewportHeight}, развернуто: ${tg.isExpanded}`)
+              const { viewportHeight, isExpanded } = readTG()
+              addLog(`📊 После инициализации - высота: ${viewportHeight}, развернуто: ${isExpanded}`)
             }, 500)
             
           } catch (error) {

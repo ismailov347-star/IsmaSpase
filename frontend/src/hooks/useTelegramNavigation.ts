@@ -2,23 +2,13 @@
 
 import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
-
-declare global {
-  interface Window {
-    Telegram?: {
-      WebApp: {
-        openLink: (url: string, options?: { try_instant_view?: boolean }) => void
-        platform: string
-      }
-    }
-  }
-}
+import { getTG } from '@/lib/tg'
 
 export const useTelegramNavigation = () => {
   const router = useRouter()
 
   const isTelegramWebApp = useCallback(() => {
-    return typeof window !== 'undefined' && window.Telegram?.WebApp
+    return !!getTG()
   }, [])
 
   const isMobileDevice = useCallback(() => {
@@ -27,9 +17,10 @@ export const useTelegramNavigation = () => {
   }, [])
 
   const openExternalLink = useCallback((url: string) => {
-    if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
+    const tg = getTG()
+    if (tg) {
       // В Telegram WebApp используем встроенный метод с отключением instant view
-      window.Telegram.WebApp.openLink(url, { try_instant_view: false })
+      tg.openLink(url, { try_instant_view: false })
     } else {
       // В обычном браузере открываем в новой вкладке
       window.open(url, '_blank', 'noopener,noreferrer')

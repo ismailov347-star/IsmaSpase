@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { readTG, getTG } from '@/lib/tg'
 
 export default function TestPage() {
   const [telegramData, setTelegramData] = useState<any>(null)
@@ -17,18 +18,17 @@ export default function TestPage() {
         return
       }
       
-      if (!window.Telegram) {
-        newErrors.push('Telegram объект не найден')
-      } else if (!window.Telegram.WebApp) {
-        newErrors.push('Telegram.WebApp не найден')
+      const tg = getTG()
+      if (!tg) {
+        newErrors.push('Telegram WebApp не найден')
       } else {
         // Собираем данные о Telegram WebApp
-        const tg = window.Telegram.WebApp
+        const { platform, initData, user } = readTG()
         setTelegramData({
           isAvailable: true,
-          initData: tg.initData,
-          user: tg.initDataUnsafe?.user,
-          platform: tg.platform || 'unknown'
+          initData,
+          user,
+          platform
         })
       }
       
