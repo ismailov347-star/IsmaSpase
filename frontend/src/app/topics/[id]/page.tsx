@@ -182,21 +182,21 @@ export default function TopicPage() {
   const progress = getProgressPercentage()
 
   return (
-    <div className="px-4 py-8">
-      <div className="mb-6">
+    <div className="px-2 py-4 sm:px-4 sm:py-8">
+      <div className="mb-4 sm:mb-6">
         <ButtonCta 
           label="← Назад" 
-          className="mb-4" 
+          className="mb-3 sm:mb-4" 
           onNavigate={() => navigate('/')}
         />
         
-        <h1 className="text-3xl font-bold text-white mb-4">{topic.title}</h1>
-        <p className="text-lg text-white/70 mb-6">{topic.description}</p>
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-3 sm:mb-4 leading-tight">{topic.title}</h1>
+        <p className="text-sm sm:text-base lg:text-lg text-white/70 mb-4 sm:mb-6 leading-relaxed">{topic.description}</p>
         
-        <div className="p-6 rounded-2xl border border-cyan-400/35 shadow-[0_0_12px_rgba(0,180,255,0.18),0_0_28px_rgba(0,180,255,0.08)] mb-8" style={{background: 'rgba(20,22,28,0.18)', backdropFilter: 'blur(4px)'}}>
+        <div className="p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-cyan-400/35 shadow-[0_0_12px_rgba(0,180,255,0.18),0_0_28px_rgba(0,180,255,0.08)] mb-6 sm:mb-8" style={{background: 'rgba(20,22,28,0.18)', backdropFilter: 'blur(4px)'}}>
           <div className="flex justify-between items-center mb-2">
-            <h3 className="text-lg font-semibold text-white">Прогресс изучения</h3>
-            <span className="text-sm text-white/70">{completedLessons}/4 уроков</span>
+            <h3 className="text-base sm:text-lg font-semibold text-white">Прогресс изучения</h3>
+            <span className="text-xs sm:text-sm text-white/70">{completedLessons}/4 уроков</span>
           </div>
           <div className="w-full bg-gray-700/50 rounded-full h-3 mb-2">
             <div 
@@ -204,29 +204,29 @@ export default function TopicPage() {
               style={{ width: `${(completedLessons / 4) * 100}%` }}
             ></div>
           </div>
-          <div className="text-right text-sm text-white/70">
+          <div className="text-right text-xs sm:text-sm text-white/70">
             {Math.round((completedLessons / 4) * 100)}% завершено
           </div>
         </div>
       </div>
 
-      <div className="grid gap-6">
+      <div className="grid gap-4 sm:gap-6">
         {staticLessons.map((lesson, index) => {
           const isCompleted = lessons.find(l => l.id === lesson.id)?.is_completed || false
           return (
-            <div key={lesson.id} className="p-6 rounded-2xl border border-cyan-400/35 shadow-[0_0_12px_rgba(0,180,255,0.18),0_0_28px_rgba(0,180,255,0.08)] hover:shadow-[0_0_14px_rgba(0,180,255,0.24),0_0_34px_rgba(0,180,255,0.12)] hover:-translate-y-0.5 transition-all duration-300" style={{background: 'rgba(20,22,28,0.18)', backdropFilter: 'blur(4px)'}}>
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex-1">
-                  <div className="flex items-center mb-2">
-                    <span className="bg-cyan-500/20 text-cyan-300 text-sm font-medium px-2.5 py-0.5 rounded mr-3 whitespace-nowrap flex-shrink-0">
+            <div key={lesson.id} className="p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-cyan-400/35 shadow-[0_0_12px_rgba(0,180,255,0.18),0_0_28px_rgba(0,180,255,0.08)] hover:shadow-[0_0_14px_rgba(0,180,255,0.24),0_0_34px_rgba(0,180,255,0.12)] hover:-translate-y-0.5 transition-all duration-300" style={{background: 'rgba(20,22,28,0.18)', backdropFilter: 'blur(4px)'}}>
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4">
+                <div className="flex-1 mb-3 sm:mb-0">
+                  <div className="flex flex-col sm:flex-row sm:items-center mb-2">
+                    <span className="bg-cyan-500/20 text-cyan-300 text-xs sm:text-sm font-medium px-2 sm:px-2.5 py-0.5 rounded mb-2 sm:mb-0 sm:mr-3 whitespace-nowrap flex-shrink-0 self-start">
                       Урок {index + 1}
                     </span>
-                    <h3 className="text-xl font-semibold text-white">{lesson.title}</h3>
+                    <h3 className="text-lg sm:text-xl font-semibold text-white leading-tight">{lesson.title}</h3>
                   </div>
-                  <p className="text-white/70 mb-4">Кратко: {lesson.description}</p>
+                  <p className="text-sm sm:text-base text-white/70 mb-3 sm:mb-4 leading-relaxed">Кратко: {lesson.description}</p>
                 </div>
                 
-                <div className="flex items-center ml-4">
+                <div className="flex items-center sm:ml-4">
                   <label className="flex items-center cursor-pointer">
                     <input
                       type="checkbox"
@@ -234,14 +234,14 @@ export default function TopicPage() {
                       onChange={() => toggleLessonCompletion(lesson.id, isCompleted)}
                       className="sr-only"
                     />
-                    <div className={`relative w-12 h-6 rounded-full transition-colors duration-200 ${
+                    <div className={`relative w-10 h-5 sm:w-12 sm:h-6 rounded-full transition-colors duration-200 ${
                       isCompleted ? 'bg-green-500' : 'bg-gray-600'
                     }`}>
-                      <div className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform duration-200 ${
-                        isCompleted ? 'transform translate-x-6' : ''
+                      <div className={`absolute top-0.5 left-0.5 w-4 h-4 sm:w-5 sm:h-5 bg-white rounded-full transition-transform duration-200 ${
+                        isCompleted ? 'transform translate-x-5 sm:translate-x-6' : ''
                       }`}></div>
                     </div>
-                    <span className={`ml-3 text-sm font-medium ${
+                    <span className={`ml-2 sm:ml-3 text-xs sm:text-sm font-medium ${
                       isCompleted ? 'text-green-400' : 'text-white/50'
                     }`}>
                       {isCompleted ? 'Пройдено' : 'Не пройдено'}
@@ -250,10 +250,10 @@ export default function TopicPage() {
                 </div>
               </div>
               
-              <div className="flex gap-4">
+              <div className="flex gap-2 sm:gap-4">
                 <ButtonCta 
                   label="Открыть урок" 
-                  className="w-full" 
+                  className="w-full text-sm sm:text-base" 
                   onNavigate={() => navigate(`/lessons/${lesson.id}`)}
                 />
               </div>

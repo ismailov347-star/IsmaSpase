@@ -79,29 +79,27 @@ body {
     -webkit-overflow-scrolling: touch;
   }
   
-  /* Исправляем проблемы с viewport на iOS */
+  /* Исправляем проблемы с viewport на iOS - убираем фиксированное позиционирование */
   body {
-    position: fixed;
     width: 100%;
-    height: calc(var(--vh, 1vh) * 100);
-    overflow: hidden;
+    min-height: calc(var(--vh, 1vh) * 100);
+    overflow-x: hidden;
   }
   
-  /* Разрешаем скролл только для основного контента */
+  /* Основной контент с правильным скроллом */
   main {
-    height: calc(var(--vh, 1vh) * 100);
-    overflow-y: auto;
+    min-height: calc(var(--vh, 1vh) * 100);
     -webkit-overflow-scrolling: touch;
   }
 }
 
 /* Стили для мобильного Telegram WebApp через CSS переменные */
 html[style*="--tg-mobile"] {
-  overflow: hidden !important;
+  overflow-x: hidden;
 }
 
 html[style*="--tg-mobile"] body {
-  overflow: hidden !important;
+  overflow-x: hidden;
 }
 
 /* Темы для Telegram WebApp через CSS переменные - теперь используются динамические значения */

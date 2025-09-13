@@ -52,7 +52,7 @@ export default function RootLayout({
              />
             <div className="relative z-10 min-h-screen">
               <Navigation />
-              <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+              <main className="max-w-7xl mx-auto py-2 px-2 sm:py-6 sm:px-6 lg:px-8">
                 <NavigationDiagnostics />
                 <TelegramWebApp>
                   {children}
