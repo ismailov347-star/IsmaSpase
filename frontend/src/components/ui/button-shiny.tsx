@@ -11,12 +11,48 @@ interface ButtonCtaProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 function ButtonCta({ label = "Get Access", className, icon, href, onNavigate, ...props }: ButtonCtaProps) {
+    const [isProcessing, setIsProcessing] = React.useState(false)
+    
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-        if (onNavigate) {
+        const isMobile = typeof window !== 'undefined' && /Mobi|Android|iPhone|iPad|iPod/i.test(window.navigator.userAgent)
+        
+        console.log('🔘 ButtonCta clicked:', {
+            label,
+            hasOnNavigate: !!onNavigate,
+            hasOnClick: !!props.onClick,
+            href,
+            timestamp: new Date().toISOString(),
+            isMobile,
+            isProcessing
+        })
+        
+        // Предотвращаем двойные клики
+        if (isProcessing) {
+            console.log('⚠️ Click ignored - already processing')
             e.preventDefault()
-            onNavigate()
-        } else if (props.onClick) {
-            props.onClick(e)
+            return
+        }
+        
+        try {
+            setIsProcessing(true)
+            
+            if (onNavigate) {
+                e.preventDefault()
+                console.log('🚀 Calling onNavigate function')
+                onNavigate()
+                console.log('✅ onNavigate completed')
+            } else if (props.onClick) {
+                console.log('🚀 Calling props.onClick')
+                props.onClick(e)
+                console.log('✅ props.onClick completed')
+            }
+        } catch (error) {
+            console.error('❌ ButtonCta click error:', error)
+        } finally {
+            // Сбрасываем флаг через небольшую задержку (уменьшено для лучшего UX)
+            setTimeout(() => {
+                setIsProcessing(false)
+            }, isMobile ? 300 : 200)
         }
     }
 

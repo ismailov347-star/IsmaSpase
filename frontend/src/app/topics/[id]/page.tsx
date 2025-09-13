@@ -34,77 +34,76 @@ export default function TopicPage() {
   }, [params.id])
 
   const fetchTopicData = async () => {
-    try {
-      const topicId = params.id as string
-      
-      // Статические данные для темы 1
-      const staticTopicData = {
-        id: 1,
-        title: 'Практикум «СИСТЕМА ЛЁГКОГО КОНТЕНТА»',
-        description: 'Простая система, которая помогает вести блог без лишней суеты: писать живые посты, удерживать интерес людей и постепенно набирать подписчиков.'
-      }
-      
-      // Если это тема 1, используем статические данные
-      if (parseInt(topicId) === 1) {
-        setTopic(staticTopicData)
-      } else {
-        // Для других тем пытаемся загрузить с API
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://isma-spase.vercel.app/api'
-        const topicResponse = await fetch(`${apiUrl}/topics/${topicId}`)
-        if (!topicResponse.ok) {
-          console.error('Тема не найдена')
-          setTopic(null)
-          setLoading(false)
-          return
+    const topicId = params.id as string
+    
+    // Статические данные для темы 1
+    const staticTopicData = {
+      id: 1,
+      title: 'Практикум «СИСТЕМА ЛЁГКОГО КОНТЕНТА»',
+      description: 'Простая система, которая помогает вести блог без лишней суеты: писать живые посты, удерживать интерес людей и постепенно набирать подписчиков.'
+    }
+    
+    // Если это тема 1, используем статические данные (без try-catch для статических данных)
+    if (parseInt(topicId) === 1) {
+      setTopic(staticTopicData)
+      // Устанавливаем статические уроки для темы 1
+      setLessons([
+        {
+          id: 1,
+          title: 'УПАКОВКА БЛОГА',
+          description: 'как оформить профиль так, чтобы подписывались и оставались.',
+          video_url: 'https://www.youtube.com/embed/XXXX?rel=0',
+          is_completed: false
+        },
+        {
+          id: 2,
+          title: 'СИСТЕМА ИДЕЙ «КОНТЕНТ БЕЗ СТУПОРА»',
+          description: 'как генерировать идеи каждый день и не выгорать.',
+          video_url: 'https://www.youtube.com/embed/YYYY?rel=0',
+          is_completed: false
+        },
+        {
+          id: 3,
+          title: 'ТЕКСТОВЫЕ РИЛС: ФОРМУЛА ЗАХВАТА ВНИМАНИЯ',
+          description: 'структура заголовка и подача, чтобы ролики брали охваты.',
+          video_url: 'https://www.youtube.com/embed/ZZZZ?rel=0',
+          is_completed: false
+        },
+        {
+          id: 4,
+          title: 'ПУБЛИКАЦИИ-КАРУСЕЛИ «ЛИСТАЙ, НЕ ОТПУСКАЙ»',
+          description: 'сценарии, ритм и оформление каруселей, которые дочитывают.',
+          video_url: 'https://www.youtube.com/embed/WWWW?rel=0',
+          is_completed: false
         }
-        
-        const topicData = await topicResponse.json()
-        setTopic(topicData)
+      ])
+      setLoading(false)
+      return
+    }
+    
+    // Для других тем пытаемся загрузить с API
+    try {
+      // На мобильных устройствах используем продакшн URL вместо localhost
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+      const apiUrl = isMobile ? 'https://isma-spase.vercel.app/api' : (process.env.NEXT_PUBLIC_API_URL || 'https://isma-spase.vercel.app/api')
+      const topicResponse = await fetch(`${apiUrl}/topics/${topicId}`)
+      if (!topicResponse.ok) {
+        console.error('Тема не найдена')
+        setTopic(null)
+        setLoading(false)
+        return
       }
+      
+      const topicData = await topicResponse.json()
+      setTopic(topicData)
       
       // Получаем уроки темы
-      if (parseInt(topicId) === 1) {
-        // Для темы 1 используем статические данные
-        setLessons([
-          {
-            id: 1,
-            title: 'УПАКОВКА БЛОГА',
-            description: 'как оформить профиль так, чтобы подписывались и оставались.',
-            video_url: 'https://www.youtube.com/embed/XXXX?rel=0',
-            is_completed: false
-          },
-          {
-            id: 2,
-            title: 'СИСТЕМА ИДЕЙ «КОНТЕНТ БЕЗ СТУПОРА»',
-            description: 'как генерировать идеи каждый день и не выгорать.',
-            video_url: 'https://www.youtube.com/embed/YYYY?rel=0',
-            is_completed: false
-          },
-          {
-            id: 3,
-            title: 'ТЕКСТОВЫЕ РИЛС: ФОРМУЛА ЗАХВАТА ВНИМАНИЯ',
-            description: 'структура заголовка и подача, чтобы ролики брали охваты.',
-            video_url: 'https://www.youtube.com/embed/ZZZZ?rel=0',
-            is_completed: false
-          },
-          {
-            id: 4,
-            title: 'ПУБЛИКАЦИИ-КАРУСЕЛИ «ЛИСТАЙ, НЕ ОТПУСКАЙ»',
-            description: 'сценарии, ритм и оформление каруселей, которые дочитывают.',
-            video_url: 'https://www.youtube.com/embed/WWWW?rel=0',
-            is_completed: false
-          }
-        ])
+      const lessonsResponse = await fetch(`${apiUrl}/topics/${topicId}/lessons`)
+      if (lessonsResponse.ok) {
+        const lessonsData = await lessonsResponse.json()
+        setLessons(lessonsData)
       } else {
-        // Для других тем пытаемся загрузить уроки с API
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://isma-spase.vercel.app/api'
-        const lessonsResponse = await fetch(`${apiUrl}/topics/${topicId}/lessons`)
-        if (lessonsResponse.ok) {
-          const lessonsData = await lessonsResponse.json()
-          setLessons(lessonsData)
-        } else {
-          setLessons([])
-        }
+        setLessons([])
       }
     } catch (error) {
       console.error('Ошибка загрузки данных:', error)
