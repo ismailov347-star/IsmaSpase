@@ -26,7 +26,7 @@ export default function TestPage() {
         const tg = window.Telegram.WebApp
         setTelegramData({
           isAvailable: true,
-          colorScheme: tg.colorScheme,
+          themeParams: tg.themeParams,
           isExpanded: tg.isExpanded,
           viewportHeight: tg.viewportHeight,
           initData: tg.initData,
