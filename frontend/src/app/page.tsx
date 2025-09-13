@@ -1,7 +1,7 @@
 'use client'
 
-import Link from 'next/link'
 import { ButtonCta } from '@/components/ui/button-shiny'
+import { useTelegramNavigation } from '@/hooks/useTelegramNavigation'
 
 const scrollToTopics = () => {
   const topicsSection = document.getElementById('topics-section')
@@ -11,6 +11,8 @@ const scrollToTopics = () => {
 }
 
 export default function Home() {
+  const { navigate } = useTelegramNavigation()
+
   return (
     <div className="px-4 py-8">
       {/* Заголовок */}
@@ -35,9 +37,10 @@ export default function Home() {
            <p className="text-gray-300 mb-6 leading-relaxed">
               Простая система, которая помогает вести блог без лишней суеты: писать живые посты, удерживать интерес людей и постепенно набирать подписчиков.
             </p>
-           <Link href="/topics/1">
-             <ButtonCta label="Изучать тему" />
-           </Link>
+           <ButtonCta 
+             label="Изучать тему" 
+             onNavigate={() => navigate('/topics/1')}
+           />
          </div>
        </div>
     </div>

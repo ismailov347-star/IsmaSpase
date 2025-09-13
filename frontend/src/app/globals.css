@@ -26,6 +26,90 @@ body {
     rgb(var(--background-start-rgb));
 }
 
+/* Стили для Telegram WebApp */
+body {
+  background-color: var(--tg-bg-color, var(--background-start-rgb));
+  color: var(--tg-text-color, rgb(var(--foreground-rgb)));
+}
+
+/* Мобильная адаптация для Telegram WebApp */
+@media (max-width: 768px) {
+  body {
+    margin: 0;
+    padding: 0;
+    -webkit-overflow-scrolling: touch;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  html {
+    height: 100%;
+    overflow-x: hidden;
+  }
+  
+  * {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  input, textarea {
+    -webkit-user-select: text;
+    -khtml-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+  }
+}
+
+/* iOS специфичные исправления */
+@supports (-webkit-touch-callout: none) {
+  /* Используем CSS переменную --vh для корректной высоты на iOS */
+  .min-h-screen {
+    min-height: calc(var(--vh, 1vh) * 100);
+  }
+  
+  /* Предотвращаем bounce эффект на iOS */
+  html, body {
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Исправляем проблемы с viewport на iOS */
+  body {
+    position: fixed;
+    width: 100%;
+    height: calc(var(--vh, 1vh) * 100);
+    overflow: hidden;
+  }
+  
+  /* Разрешаем скролл только для основного контента */
+  main {
+    height: calc(var(--vh, 1vh) * 100);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Стили для мобильного Telegram WebApp через CSS переменные */
+html[style*="--tg-mobile"] {
+  overflow: hidden !important;
+}
+
+html[style*="--tg-mobile"] body {
+  overflow: hidden !important;
+}
+
+/* Темы для Telegram WebApp через CSS переменные - теперь используются динамические значения */
+:root {
+  --tg-bg-color: var(--background-start-rgb);
+  --tg-text-color: rgb(var(--foreground-rgb));
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

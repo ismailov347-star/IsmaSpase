@@ -154,10 +154,10 @@ bot.on('text', async (ctx) => {
         await sendTyping(ctx)
         await ctx.reply('Выбери тему:', 
           Markup.inlineKeyboard([
-            [Markup.button.webApp('1) Упаковка блога', 'https://placeholder.local/app?lesson=1')],
-            [Markup.button.webApp('2) Контент без ступора', 'https://placeholder.local/app?lesson=2')],
-            [Markup.button.webApp('3) Текстовые рилс', 'https://placeholder.local/app?lesson=3')],
-            [Markup.button.webApp('4) Карусели', 'https://placeholder.local/app?lesson=4')]
+            [Markup.button.webApp('1) Упаковка блога', `${process.env.API_BASE_URL}?lesson=1`)],
+            [Markup.button.webApp('2) Контент без ступора', `${process.env.API_BASE_URL}?lesson=2`)],
+            [Markup.button.webApp('3) Текстовые рилс', `${process.env.API_BASE_URL}?lesson=3`)],
+            [Markup.button.webApp('4) Карусели', `${process.env.API_BASE_URL}?lesson=4`)]
           ])
         )
         break
@@ -166,7 +166,7 @@ bot.on('text', async (ctx) => {
         await sendTyping(ctx)
         await ctx.reply('Твой прогресс: 0/4 уроков ✅', 
           Markup.inlineKeyboard([
-            Markup.button.webApp('Открыть платформу', 'https://placeholder.local/app')
+            Markup.button.webApp('Открыть платформу', process.env.API_BASE_URL)
           ])
         )
         break

@@ -6,9 +6,20 @@ interface ButtonCtaProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     label?: string;
     className?: string;
     icon?: React.ReactNode;
+    href?: string;
+    onNavigate?: () => void;
 }
 
-function ButtonCta({ label = "Get Access", className, icon, ...props }: ButtonCtaProps) {
+function ButtonCta({ label = "Get Access", className, icon, href, onNavigate, ...props }: ButtonCtaProps) {
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        if (onNavigate) {
+            e.preventDefault()
+            onNavigate()
+        } else if (props.onClick) {
+            props.onClick(e)
+        }
+    }
+
     return (
         <Button
             variant="ghost"
@@ -16,6 +27,7 @@ function ButtonCta({ label = "Get Access", className, icon, ...props }: ButtonCt
                 "group relative w-auto h-12 px-6 rounded-lg overflow-hidden transition-all duration-500",
                 className
             )}
+            onClick={handleClick}
             {...props}
         >
             <div className="absolute inset-0 rounded-lg p-[2px] bg-gradient-to-b from-[#654358] via-[#17092A] to-[#2F0D64]">

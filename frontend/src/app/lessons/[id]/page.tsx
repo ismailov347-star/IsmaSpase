@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import Link from 'next/link'
 import { ButtonCta } from '@/components/ui/button-shiny'
+import { useTelegramNavigation } from '@/hooks/useTelegramNavigation'
 
 interface Lesson {
   id: number
@@ -18,6 +18,7 @@ interface Lesson {
 export default function LessonPage() {
   const params = useParams()
   const router = useRouter()
+  const { navigate, openExternalLink } = useTelegramNavigation()
   const [lesson, setLesson] = useState<Lesson | null>(null)
   const [loading, setLoading] = useState(true)
   const [videoLoaded, setVideoLoaded] = useState(false)
@@ -91,19 +92,8 @@ export default function LessonPage() {
   const toggleCompletion = async () => {
     if (!lesson) return
     
-    try {
-      await fetch(`http://localhost:3001/api/lessons/${lesson.id}/complete`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ completed: !lesson.is_completed }),
-      })
-      
-      setLesson({ ...lesson, is_completed: !lesson.is_completed })
-    } catch (error) {
-      console.error('Ошибка обновления статуса урока:', error)
-    }
+    // Обновляем статус урока локально без API
+    setLesson({ ...lesson, is_completed: !lesson.is_completed })
   }
 
   const getYouTubeEmbedUrl = (url: string) => {
@@ -130,9 +120,10 @@ export default function LessonPage() {
     return (
       <div className="text-center py-12">
         <h2 className="text-2xl font-bold text-white mb-4">Урок не найден</h2>
-        <Link href="/">
-          <ButtonCta label="Вернуться на главную" />
-        </Link>
+        <ButtonCta 
+          label="Вернуться на главную" 
+          onNavigate={() => navigate('/')}
+        />
       </div>
     )
   }
@@ -141,9 +132,11 @@ export default function LessonPage() {
     <div className="px-4 py-8 max-w-4xl mx-auto">
       {/* Навигация */}
       <div className="mb-6">
-        <Link href={`/topics/${lesson.topic_id}`}>
-          <ButtonCta label="← Назад" className="mb-4" />
-        </Link>
+        <ButtonCta 
+          label="← Назад" 
+          className="mb-4" 
+          onNavigate={() => navigate(`/topics/${lesson.topic_id}`)}
+        />
       </div>
 
       {/* Заголовок урока */}
@@ -195,6 +188,21 @@ export default function LessonPage() {
               allowFullScreen
               onLoad={() => setVideoLoaded(true)}
             ></iframe>
+            
+            {/* Кнопка для открытия видео в полноэкранном режиме */}
+            <div className="absolute bottom-4 right-4">
+              <ButtonCta
+                label="Открыть в YouTube"
+                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 text-sm"
+                onNavigate={() => {
+                  // Конвертируем embed URL в обычный YouTube URL
+                  const videoId = lesson.video_url.match(/embed\/([^?]+)/)?.[1]
+                  if (videoId) {
+                    openExternalLink(`https://www.youtube.com/watch?v=${videoId}`)
+                  }
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -217,9 +225,11 @@ export default function LessonPage() {
 
       {/* Навигация между уроками */}
       <div className="flex justify-center">
-        <Link href={`/topics/${lesson.topic_id}`}>
-          <ButtonCta label="Вернуться к списку уроков" icon="←" />
-        </Link>
+        <ButtonCta 
+          label="Вернуться к списку уроков" 
+          icon="←" 
+          onNavigate={() => navigate(`/topics/${lesson.topic_id}`)}
+        />
       </div>
     </div>
   )

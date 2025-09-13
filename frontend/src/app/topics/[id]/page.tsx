@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import Link from 'next/link'
 import { ButtonCta } from '@/components/ui/button-shiny'
+import { useTelegramNavigation } from '@/hooks/useTelegramNavigation'
 
 interface Lesson {
   id: number
@@ -22,6 +22,7 @@ interface Topic {
 export default function TopicPage() {
   const params = useParams()
   const router = useRouter()
+  const { navigate } = useTelegramNavigation()
   const [topic, setTopic] = useState<Topic | null>(null)
   const [lessons, setLessons] = useState<Lesson[]>([])
   const [loading, setLoading] = useState(true)
@@ -34,41 +35,92 @@ export default function TopicPage() {
 
   const fetchTopicData = async () => {
     try {
-      const [topicResponse, lessonsResponse] = await Promise.all([
-        fetch(`http://localhost:3001/api/topics/${params.id}`),
-        fetch(`http://localhost:3001/api/topics/${params.id}/lessons`)
-      ])
+      const topicId = params.id as string
       
-      const topicData = await topicResponse.json()
-      const lessonsData = await lessonsResponse.json()
+      // Статические данные для темы 1
+      const staticTopicData = {
+        id: 1,
+        title: 'Практикум «СИСТЕМА ЛЁГКОГО КОНТЕНТА»',
+        description: 'Простая система, которая помогает вести блог без лишней суеты: писать живые посты, удерживать интерес людей и постепенно набирать подписчиков.'
+      }
       
-      setTopic(topicData)
-      setLessons(lessonsData)
+      // Если это тема 1, используем статические данные
+      if (parseInt(topicId) === 1) {
+        setTopic(staticTopicData)
+      } else {
+        // Для других тем пытаемся загрузить с API
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://isma-spase.vercel.app/api'
+        const topicResponse = await fetch(`${apiUrl}/topics/${topicId}`)
+        if (!topicResponse.ok) {
+          console.error('Тема не найдена')
+          setTopic(null)
+          setLoading(false)
+          return
+        }
+        
+        const topicData = await topicResponse.json()
+        setTopic(topicData)
+      }
+      
+      // Получаем уроки темы
+      if (parseInt(topicId) === 1) {
+        // Для темы 1 используем статические данные
+        setLessons([
+          {
+            id: 1,
+            title: 'УПАКОВКА БЛОГА',
+            description: 'как оформить профиль так, чтобы подписывались и оставались.',
+            video_url: 'https://www.youtube.com/embed/XXXX?rel=0',
+            is_completed: false
+          },
+          {
+            id: 2,
+            title: 'СИСТЕМА ИДЕЙ «КОНТЕНТ БЕЗ СТУПОРА»',
+            description: 'как генерировать идеи каждый день и не выгорать.',
+            video_url: 'https://www.youtube.com/embed/YYYY?rel=0',
+            is_completed: false
+          },
+          {
+            id: 3,
+            title: 'ТЕКСТОВЫЕ РИЛС: ФОРМУЛА ЗАХВАТА ВНИМАНИЯ',
+            description: 'структура заголовка и подача, чтобы ролики брали охваты.',
+            video_url: 'https://www.youtube.com/embed/ZZZZ?rel=0',
+            is_completed: false
+          },
+          {
+            id: 4,
+            title: 'ПУБЛИКАЦИИ-КАРУСЕЛИ «ЛИСТАЙ, НЕ ОТПУСКАЙ»',
+            description: 'сценарии, ритм и оформление каруселей, которые дочитывают.',
+            video_url: 'https://www.youtube.com/embed/WWWW?rel=0',
+            is_completed: false
+          }
+        ])
+      } else {
+        // Для других тем пытаемся загрузить уроки с API
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://isma-spase.vercel.app/api'
+        const lessonsResponse = await fetch(`${apiUrl}/topics/${topicId}/lessons`)
+        if (lessonsResponse.ok) {
+          const lessonsData = await lessonsResponse.json()
+          setLessons(lessonsData)
+        } else {
+          setLessons([])
+        }
+      }
     } catch (error) {
       console.error('Ошибка загрузки данных:', error)
+      setTopic(null)
     } finally {
       setLoading(false)
     }
   }
 
   const toggleLessonCompletion = async (lessonId: number, isCompleted: boolean) => {
-    try {
-      await fetch(`http://localhost:3001/api/lessons/${lessonId}/complete`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ completed: !isCompleted }),
-      })
-      
-      setLessons(lessons.map(lesson => 
-        lesson.id === lessonId 
-          ? { ...lesson, is_completed: !isCompleted }
-          : lesson
-      ))
-    } catch (error) {
-      console.error('Ошибка обновления статуса урока:', error)
-    }
+    // Обновляем статус урока локально без API
+    setLessons(lessons.map(lesson => 
+      lesson.id === lessonId 
+        ? { ...lesson, is_completed: !isCompleted }
+        : lesson
+    ))
   }
 
   // Статические данные для уроков
@@ -120,9 +172,10 @@ export default function TopicPage() {
     return (
       <div className="text-center py-12">
         <h2 className="text-2xl font-bold text-gray-900 mb-4">Тема не найдена</h2>
-        <Link href="/">
-          <ButtonCta label="Вернуться на главную" />
-        </Link>
+        <ButtonCta 
+          label="Вернуться на главную" 
+          onNavigate={() => navigate('/')}
+        />
       </div>
     )
   }
@@ -132,12 +185,14 @@ export default function TopicPage() {
   return (
     <div className="px-4 py-8">
       <div className="mb-6">
-        <Link href="/">
-          <ButtonCta label="← Назад" className="mb-4" />
-        </Link>
+        <ButtonCta 
+          label="← Назад" 
+          className="mb-4" 
+          onNavigate={() => navigate('/')}
+        />
         
-        <h1 className="text-3xl font-bold text-white mb-4">Практикум «СИСТЕМА ЛЁГКОГО КОНТЕНТА»</h1>
-        <p className="text-lg text-white/70 mb-6">Короткая, понятная система для роста блога и стабильного контента.</p>
+        <h1 className="text-3xl font-bold text-white mb-4">{topic.title}</h1>
+        <p className="text-lg text-white/70 mb-6">{topic.description}</p>
         
         <div className="p-6 rounded-2xl border border-cyan-400/35 shadow-[0_0_12px_rgba(0,180,255,0.18),0_0_28px_rgba(0,180,255,0.08)] mb-8" style={{background: 'rgba(20,22,28,0.18)', backdropFilter: 'blur(4px)'}}>
           <div className="flex justify-between items-center mb-2">
@@ -197,9 +252,11 @@ export default function TopicPage() {
               </div>
               
               <div className="flex gap-4">
-                <Link href={`/lessons/${lesson.id}`} className="flex-1">
-                  <ButtonCta label="Открыть урок" className="w-full" />
-                </Link>
+                <ButtonCta 
+                  label="Открыть урок" 
+                  className="w-full" 
+                  onNavigate={() => navigate(`/lessons/${lesson.id}`)}
+                />
               </div>
             </div>
           )
