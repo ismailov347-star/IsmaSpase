@@ -87,7 +87,7 @@ db.serialize(() => {
                 {
                   title: 'УПАКОВКА БЛОГА',
                   description: 'как оформить профиль так, чтобы подписывались и оставались.',
-                  video_url: 'https://www.youtube.com/embed/XXXX?rel=0'
+                  video_url: 'https://miro.com/app/board/uXjVJRG4MJs=/?playRecording=67075cf5-24c9-4ecb-8edd-9738c2c9555a'
                 },
                 {
                   title: 'СИСТЕМА ИДЕЙ «КОНТЕНТ БЕЗ СТУПОРА»',

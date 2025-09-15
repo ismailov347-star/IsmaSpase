@@ -27,7 +27,7 @@ export default function LessonPage() {
       id: 1,
       title: "УПАКОВКА БЛОГА",
       description: "как оформить профиль так, чтобы подписывались и оставались.",
-      youtubeUrl: "https://www.youtube.com/embed/XXXX?rel=0",
+      youtubeUrl: "https://miro.com/app/board/uXjVJRG4MJs=/?playRecording=67075cf5-24c9-4ecb-8edd-9738c2c9555a",
       topic_id: 1,
       topic_title: "Практикум «СИСТЕМА ЛЁГКОГО КОНТЕНТА»"
     },
