@@ -52,35 +52,40 @@ export default function TopicPage() {
     const numericId = parseInt(topicId)
     if (numericId === 1) {
       setTopic(staticTopicData)
-      // Устанавливаем статические уроки для темы 1
+      
+      // Загружаем прогресс из localStorage
+      const savedProgress = localStorage.getItem('lessonProgress')
+      const progressData = savedProgress ? JSON.parse(savedProgress) : {}
+      
+      // Устанавливаем статические уроки для темы 1 с сохраненным прогрессом
       setLessons([
         {
           id: 1,
           title: 'УПАКОВКА БЛОГА',
           description: 'как оформить профиль так, чтобы подписывались и оставались.',
           video_url: 'https://miro.com/app/board/uXjVJRG4MJs=/?playRecording=67075cf5-24c9-4ecb-8edd-9738c2c9555a',
-          is_completed: false
+          is_completed: progressData[1] || false
         },
         {
           id: 2,
           title: 'СИСТЕМА ИДЕЙ «КОНТЕНТ БЕЗ СТУПОРА»',
           description: 'как генерировать идеи каждый день и не выгорать.',
           video_url: 'https://www.youtube.com/embed/YYYY?rel=0',
-          is_completed: false
+          is_completed: progressData[2] || false
         },
         {
           id: 3,
           title: 'ТЕКСТОВЫЕ РИЛС: ФОРМУЛА ЗАХВАТА ВНИМАНИЯ',
           description: 'структура заголовка и подача, чтобы ролики брали охваты.',
           video_url: 'https://www.youtube.com/embed/ZZZZ?rel=0',
-          is_completed: false
+          is_completed: progressData[3] || false
         },
         {
           id: 4,
           title: 'ПУБЛИКАЦИИ-КАРУСЕЛИ «ЛИСТАЙ, НЕ ОТПУСКАЙ»',
           description: 'сценарии, ритм и оформление каруселей, которые дочитывают.',
           video_url: 'https://www.youtube.com/embed/WWWW?rel=0',
-          is_completed: false
+          is_completed: progressData[4] || false
         }
       ])
       setLoading(false)
@@ -120,12 +125,20 @@ export default function TopicPage() {
   }
 
   const toggleLessonCompletion = async (lessonId: number, isCompleted: boolean) => {
-    // Обновляем статус урока локально без API
+    const newCompletionStatus = !isCompleted
+    
+    // Обновляем статус урока локально
     setLessons(lessons.map(lesson => 
       lesson.id === lessonId 
-        ? { ...lesson, is_completed: !isCompleted }
+        ? { ...lesson, is_completed: newCompletionStatus }
         : lesson
     ))
+    
+    // Сохраняем прогресс в localStorage
+    const savedProgress = localStorage.getItem('lessonProgress')
+    const progressData = savedProgress ? JSON.parse(savedProgress) : {}
+    progressData[lessonId] = newCompletionStatus
+    localStorage.setItem('lessonProgress', JSON.stringify(progressData))
   }
 
   // Статические данные для уроков

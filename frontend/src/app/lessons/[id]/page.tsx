@@ -4,6 +4,7 @@ import { useParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { ButtonCta } from '@/components/ui/button-shiny'
 import Link from 'next/link'
+import VideoPlayer from '@/components/VideoPlayer'
 
 interface Lesson {
   id: number
@@ -70,6 +71,11 @@ export default function LessonPage() {
       const staticLesson = staticLessons.find(l => l.id === lessonId)
       
       if (staticLesson) {
+        // Загружаем состояние прогресса из localStorage
+        const savedProgress = localStorage.getItem('lessonProgress')
+        const progressData = savedProgress ? JSON.parse(savedProgress) : {}
+        const isCompleted = progressData[lessonId] || false
+        
         setLesson({
           id: staticLesson.id,
           title: staticLesson.title,
@@ -77,7 +83,7 @@ export default function LessonPage() {
           video_url: staticLesson.youtubeUrl,
           topic_id: staticLesson.topic_id,
           topic_title: staticLesson.topic_title,
-          is_completed: false
+          is_completed: isCompleted
         })
       }
     } catch (error) {
@@ -90,8 +96,16 @@ export default function LessonPage() {
   const toggleCompletion = async () => {
     if (!lesson) return
     
-    // Обновляем статус урока локально без API
-    setLesson({ ...lesson, is_completed: !lesson.is_completed })
+    const newCompletionStatus = !lesson.is_completed
+    
+    // Обновляем статус урока локально
+    setLesson({ ...lesson, is_completed: newCompletionStatus })
+    
+    // Сохраняем прогресс в localStorage
+    const savedProgress = localStorage.getItem('lessonProgress')
+    const progressData = savedProgress ? JSON.parse(savedProgress) : {}
+    progressData[lesson.id] = newCompletionStatus
+    localStorage.setItem('lessonProgress', JSON.stringify(progressData))
   }
 
   const getYouTubeEmbedUrl = (url: string) => {
@@ -169,40 +183,34 @@ export default function LessonPage() {
       {/* Видео */}
       <div className="mb-6">
         <div className="p-6 rounded-2xl border border-cyan-400/35 shadow-[0_0_12px_rgba(0,180,255,0.18),0_0_28px_rgba(0,180,255,0.08)] hover:shadow-[0_0_14px_rgba(0,180,255,0.24),0_0_34px_rgba(0,180,255,0.12)] hover:-translate-y-0.5 transition-all duration-300" style={{background: 'rgba(20,22,28,0.18)', backdropFilter: 'blur(4px)'}}>
-          <div className="aspect-video bg-gray-900/50 rounded-lg relative overflow-hidden">
-            {!videoLoaded && (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mx-auto mb-4"></div>
-                  <p className="text-white/70">Загрузка видео...</p>
-                </div>
+          {!videoLoaded && (
+            <div className="aspect-video bg-gray-900/50 rounded-lg flex items-center justify-center mb-4">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mx-auto mb-4"></div>
+                <p className="text-white/70">Загрузка видео...</p>
               </div>
-            )}
-            
-            <iframe
-              src={lesson.video_url}
-              title={lesson.title}
-              className="w-full h-full rounded-lg"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              onLoad={() => setVideoLoaded(true)}
-            ></iframe>
-            
-            {/* Кнопка для открытия видео в полноэкранном режиме */}
-            <div className="absolute bottom-4 right-4">
-              <ButtonCta
-                label="Открыть в YouTube"
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 text-sm"
-onClick={() => {
-                  // Конвертируем embed URL в обычный YouTube URL
-                  const videoId = lesson.video_url.match(/embed\/([^?]+)/)?.[1]
-                  if (videoId) {
-                    window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank')
-                  }
-                }}
-              />
             </div>
+          )}
+          
+          <VideoPlayer
+            videoUrl={lesson.video_url}
+            title={lesson.title}
+            onLoad={() => setVideoLoaded(true)}
+          />
+          
+          {/* Кнопка для открытия видео в YouTube - вынесена за пределы видео */}
+          <div className="mt-4 flex justify-center">
+            <ButtonCta
+              label="Открыть в YouTube"
+              className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 text-xs"
+              onClick={() => {
+                // Конвертируем embed URL в обычный YouTube URL
+                const videoId = lesson.video_url.match(/embed\/([^?]+)/)?.[1]
+                if (videoId) {
+                  window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank')
+                }
+              }}
+            />
           </div>
         </div>
       </div>
