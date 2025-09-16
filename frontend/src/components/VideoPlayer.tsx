@@ -11,6 +11,41 @@ interface VideoPlayerProps {
 }
 
 export default function VideoPlayer({ videoUrl, title, onLoad, showControls = false }: VideoPlayerProps) {
+  // CSS стили для кастомного ползунка
+  const sliderStyles = `
+    .slider::-webkit-slider-thumb {
+      appearance: none;
+      height: 20px;
+      width: 20px;
+      border-radius: 50%;
+      background: #3b82f6;
+      cursor: pointer;
+      border: 2px solid #ffffff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      transition: all 0.2s ease;
+    }
+    .slider::-webkit-slider-thumb:hover {
+      background: #2563eb;
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+    .slider::-moz-range-thumb {
+      height: 20px;
+      width: 20px;
+      border-radius: 50%;
+      background: #3b82f6;
+      cursor: pointer;
+      border: 2px solid #ffffff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      transition: all 0.2s ease;
+    }
+    .slider::-moz-range-thumb:hover {
+      background: #2563eb;
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+  `
+
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
   const [playbackSpeed, setPlaybackSpeed] = useState(1)
@@ -117,6 +152,8 @@ export default function VideoPlayer({ videoUrl, title, onLoad, showControls = fa
       }`}
       // Убрано управление showControls на уровне видео
     >
+      {/* CSS стили для ползунка */}
+      <style dangerouslySetInnerHTML={{ __html: sliderStyles }} />
       <iframe
         ref={iframeRef}
         src={getVideoUrl()}
@@ -166,35 +203,74 @@ export default function VideoPlayer({ videoUrl, title, onLoad, showControls = fa
             </button>
 
             {/* Меню настроек */}
-             {showSettings && (
-               <div className="absolute bottom-full right-0 mb-2 bg-white/95 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200/50 overflow-hidden">
-                 {/* Скорость воспроизведения */}
-                 <div className="p-2">
-                   <div className="text-gray-700 text-xs font-medium mb-2 px-2">Скорость</div>
-                   <div className="space-y-1">
-                     {[0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2].map((speed) => (
-                       <button
-                         key={speed}
-                         onClick={() => {
-                           setPlaybackSpeed(speed)
-                           setShowSettings(false)
-                         }}
-                         className={`w-full px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-between ${
-                           playbackSpeed === speed
-                             ? 'bg-blue-500 text-white shadow-sm'
-                             : 'text-gray-700 hover:bg-gray-100 active:bg-gray-200'
-                         }`}
-                       >
-                         <span>{speed}x</span>
-                         {playbackSpeed === speed && (
-                           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                           </svg>
-                         )}
-                       </button>
-                     ))}
-                   </div>
-                 </div>
+              {showSettings && (
+                <div className="absolute bottom-full right-0 mb-2 bg-white/95 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200/50 overflow-hidden animate-in slide-in-from-bottom-2 fade-in duration-200">
+                  {/* Скорость воспроизведения */}
+                  <div className="p-4 min-w-[280px]">
+                    <div className="text-gray-700 text-sm font-medium mb-4 flex items-center gap-2">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12.5,7V12.25L17,14.92L16.25,16.15L11,13V7H12.5Z"/>
+                      </svg>
+                      Скорость воспроизведения
+                    </div>
+                    
+                    {/* Отображение текущей скорости */}
+                    <div className="text-center mb-4">
+                      <div className="text-2xl font-bold text-gray-800">{playbackSpeed.toFixed(2)}x</div>
+                      <div className="text-xs text-gray-500 mt-1">
+                        {playbackSpeed === 1 ? 'Нормальная' : playbackSpeed < 1 ? 'Медленнее' : 'Быстрее'}
+                      </div>
+                    </div>
+                    
+                    {/* Ползунок скорости */}
+                    <div className="mb-4">
+                      <input
+                        type="range"
+                        min="0.25"
+                        max="2.0"
+                        step="0.05"
+                        value={playbackSpeed}
+                        onChange={(e) => setPlaybackSpeed(parseFloat(e.target.value))}
+                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                        style={{
+                          background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${((playbackSpeed - 0.25) / (2.0 - 0.25)) * 100}%, #e5e7eb ${((playbackSpeed - 0.25) / (2.0 - 0.25)) * 100}%, #e5e7eb 100%)`
+                        }}
+                      />
+                      <div className="flex justify-between text-xs text-gray-400 mt-1">
+                        <span>0.25x</span>
+                        <span>1.0x</span>
+                        <span>2.0x</span>
+                      </div>
+                    </div>
+                    
+                    {/* Быстрые кнопки */}
+                    <div className="grid grid-cols-4 gap-2">
+                      {[0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0].map((speed) => (
+                        <button
+                          key={speed}
+                          onClick={() => setPlaybackSpeed(speed)}
+                          className={`px-2 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${
+                            Math.abs(playbackSpeed - speed) < 0.01
+                              ? 'bg-blue-500 text-white shadow-sm'
+                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200 active:bg-gray-300'
+                          }`}
+                        >
+                          {speed}x
+                        </button>
+                      ))}
+                    </div>
+                    
+                    {/* Кнопка сброса */}
+                    <button
+                      onClick={() => setPlaybackSpeed(1.0)}
+                      className="w-full mt-3 px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-all duration-200 flex items-center justify-center gap-2"
+                    >
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12,4C14.1,4 16.1,4.8 17.6,6.3C20.7,9.4 20.7,14.5 17.6,17.6C15.8,19.5 13.3,20.2 10.9,19.9L11.4,17.9C13.1,18.1 14.9,17.5 16.2,16.2C18.5,13.9 18.5,10.1 16.2,7.7C15.1,6.6 13.5,6 12,6V10.5L7,5.5L12,0.5V4M6.3,17.6C3.7,15 3.3,11 5.1,7.9L6.6,9.4C5.5,11.6 5.9,14.4 7.8,16.2C8.3,16.7 8.9,17.1 9.6,17.4L9,19.4C8,19 7.1,18.4 6.3,17.6Z"/>
+                      </svg>
+                      Сбросить
+                    </button>
+                  </div>
 
 
               </div>
