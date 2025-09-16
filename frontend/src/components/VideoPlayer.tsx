@@ -99,51 +99,72 @@ export default function VideoPlayer({ videoUrl, title, onLoad }: VideoPlayerProp
       <div className={`absolute inset-0 pointer-events-none transition-opacity duration-300 ${
         showControls || isFullscreen ? 'opacity-100' : 'opacity-0'
       }`}>
-        {/* Контролы в правом верхнем углу */}
-        <div className="absolute top-4 right-4 flex flex-col gap-2 pointer-events-auto">
+        {/* Контролы в правом нижнем углу */}
+        <div className="absolute bottom-4 right-4 flex flex-row-reverse gap-3 pointer-events-auto">
           {/* Кнопка полноэкранного режима */}
           <button
             onClick={toggleFullscreen}
-            className="bg-black/70 hover:bg-black/90 text-white p-2 rounded-lg transition-colors duration-200 backdrop-blur-sm"
+            className="bg-black/80 hover:bg-black/95 text-white p-3 rounded-full transition-all duration-300 backdrop-blur-md shadow-lg hover:shadow-xl hover:scale-110 border border-white/20 hover:border-white/40"
             title={isFullscreen ? 'Выйти из полноэкранного режима' : 'Полноэкранный режим'}
           >
             {isFullscreen ? (
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 9V4.5M9 9H4.5M9 9L3.75 3.75M15 15v4.5M15 15h4.5M15 15l5.25 5.25" />
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/>
               </svg>
             ) : (
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M20.25 3.75v4.5m0-4.5h-4.5m4.5 0L15 9m5.25 11.25v-4.5m0 4.5h-4.5m4.5 0L15 15m-5.25 5.25v-4.5m0 4.5h4.5m-4.5 0L9 15" />
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
               </svg>
             )}
           </button>
           
           {/* Селектор скорости воспроизведения */}
-          <div className="relative">
-            <select
-              value={playbackRate}
-              onChange={(e) => changePlaybackRate(Number(e.target.value))}
-              className="bg-black/70 hover:bg-black/90 text-white p-2 rounded-lg transition-colors duration-200 backdrop-blur-sm text-sm min-w-[60px] appearance-none cursor-pointer"
+          <div className="relative group">
+            <button
+              className="bg-black/80 hover:bg-black/95 text-white p-3 rounded-full transition-all duration-300 backdrop-blur-md shadow-lg hover:shadow-xl hover:scale-110 border border-white/20 hover:border-white/40 flex items-center justify-center"
               title="Скорость воспроизведения"
+              onClick={() => {
+                const currentIndex = playbackRates.indexOf(playbackRate)
+                const nextIndex = (currentIndex + 1) % playbackRates.length
+                changePlaybackRate(playbackRates[nextIndex])
+              }}
             >
-              {playbackRates.map(rate => (
-                <option key={rate} value={rate} className="bg-gray-800">
-                  {rate}x
-                </option>
-              ))}
-            </select>
-            <div className="absolute right-1 top-1/2 transform -translate-y-1/2 pointer-events-none">
-              <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M13,8V16L18.5,12M4,12A8,8 0 0,1 12,4C12.74,4 13.45,4.12 14.12,4.34L15.54,2.92C14.43,2.33 13.24,2 12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12H20A8,8 0 0,1 12,20A8,8 0 0,1 4,12Z"/>
               </svg>
+              <span className="ml-1 text-xs font-semibold">{playbackRate}x</span>
+            </button>
+            
+            {/* Выпадающий список скоростей */}
+            <div className="absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto">
+              <div className="bg-black/90 backdrop-blur-md rounded-lg border border-white/20 shadow-xl p-1 min-w-[80px]">
+                {playbackRates.map(rate => (
+                  <button
+                    key={rate}
+                    onClick={() => changePlaybackRate(rate)}
+                    className={`w-full text-left px-3 py-2 text-sm rounded transition-colors duration-200 ${
+                      rate === playbackRate 
+                        ? 'bg-cyan-500/30 text-cyan-300' 
+                        : 'text-white hover:bg-white/10'
+                    }`}
+                  >
+                    {rate}x
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
         
         {/* Индикатор скорости в левом нижнем углу */}
         {playbackRate !== 1 && (
-          <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded-lg text-sm backdrop-blur-sm">
-            Скорость: {playbackRate}x
+          <div className="absolute bottom-4 left-4 bg-black/80 text-white px-4 py-2 rounded-full text-sm backdrop-blur-md shadow-lg border border-white/20">
+            <div className="flex items-center gap-2">
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M13,8V16L18.5,12M4,12A8,8 0 0,1 12,4C12.74,4 13.45,4.12 14.12,4.34L15.54,2.92C14.43,2.33 13.24,2 12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12H20A8,8 0 0,1 12,20A8,8 0 0,1 4,12Z"/>
+              </svg>
+              <span className="font-semibold">{playbackRate}x</span>
+            </div>
           </div>
         )}
       </div>
