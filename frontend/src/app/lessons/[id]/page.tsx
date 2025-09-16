@@ -93,20 +93,7 @@ export default function LessonPage() {
     }
   }
 
-  const toggleCompletion = async () => {
-    if (!lesson) return
-    
-    const newCompletionStatus = !lesson.is_completed
-    
-    // Обновляем статус урока локально
-    setLesson({ ...lesson, is_completed: newCompletionStatus })
-    
-    // Сохраняем прогресс в localStorage
-    const savedProgress = localStorage.getItem('lessonProgress')
-    const progressData = savedProgress ? JSON.parse(savedProgress) : {}
-    progressData[lesson.id] = newCompletionStatus
-    localStorage.setItem('lessonProgress', JSON.stringify(progressData))
-  }
+
 
   const getYouTubeEmbedUrl = (url: string) => {
     // Извлекаем ID видео из различных форматов YouTube URL
@@ -160,23 +147,15 @@ export default function LessonPage() {
           <p className="text-lg text-white/70 mb-6">{lesson.description}</p>
           
           {/* Статус завершения */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <div className={`w-3 h-3 rounded-full mr-3 ${
-                lesson.is_completed ? 'bg-green-500' : 'bg-gray-500'
-              }`}></div>
-              <span className={`font-medium ${
-                lesson.is_completed ? 'text-green-400' : 'text-white/50'
-              }`}>
-                {lesson.is_completed ? 'Урок пройден' : 'Урок не пройден'}
-              </span>
-            </div>
-            
-            <ButtonCta
-              onClick={toggleCompletion}
-              label={lesson.is_completed ? 'Снять отметку' : 'Отметить как пройденный'}
-              className="text-xs px-4 py-2.5 whitespace-nowrap overflow-hidden text-ellipsis max-w-[220px]"
-            />
+          <div className="flex items-center">
+            <div className={`w-3 h-3 rounded-full mr-3 ${
+              lesson.is_completed ? 'bg-green-500' : 'bg-gray-500'
+            }`}></div>
+            <span className={`font-medium ${
+              lesson.is_completed ? 'text-green-400' : 'text-white/50'
+            }`}>
+              {lesson.is_completed ? 'Урок пройден' : 'Урок не пройден'}
+            </span>
           </div>
         </div>
       </div>
@@ -227,7 +206,6 @@ export default function LessonPage() {
             <li>Просмотреть видео полностью</li>
             <li>Делать заметки по ходу просмотра</li>
             <li>Практиковать полученные знания</li>
-            <li>Отметить урок как пройденный после изучения</li>
           </ul>
         </div>
       </div>
