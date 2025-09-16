@@ -104,12 +104,25 @@ export default function VideoPlayer({ videoUrl, title, onLoad, showControls = fa
 
 
 
+  // Определяем мобильное устройство
+  const isMobileDevice = () => {
+    if (typeof window === 'undefined') return false
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+  }
+
   // Получаем URL с параметрами для YouTube
   const getVideoUrl = () => {
     if (videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be')) {
       // Добавляем параметры для YouTube API
       const separator = videoUrl.includes('?') ? '&' : '?'
-      return `${videoUrl}${separator}enablejsapi=1&origin=${window.location.origin}`
+      const isMobile = isMobileDevice()
+      
+      // Параметры для решения проблем с мобильными устройствами
+      const mobileParams = isMobile 
+        ? '&playsinline=1&widget_referrer=' + encodeURIComponent(window.location.origin)
+        : ''
+      
+      return `${videoUrl}${separator}enablejsapi=1&origin=${window.location.origin}&rel=0&modestbranding=1${mobileParams}`
     }
     return videoUrl
   }
@@ -199,8 +212,8 @@ export default function VideoPlayer({ videoUrl, title, onLoad, showControls = fa
                 {/* Скорость воспроизведения */}
                 <div className="mb-4">
                   <h3 className="text-white text-sm font-medium mb-2">Скорость воспроизведения</h3>
-                  <div className="grid grid-cols-2 gap-2">
-                    {[0.5, 0.75, 1, 1.25, 1.5, 2].map((speed) => (
+                  <div className="grid grid-cols-3 gap-2">
+                    {[0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2].map((speed) => (
                       <button
                         key={speed}
                         onClick={() => handleSpeedChange(speed)}

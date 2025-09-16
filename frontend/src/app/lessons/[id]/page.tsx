@@ -102,7 +102,15 @@ export default function LessonPage() {
     const match = url.match(regExp)
     
     if (match && match[2].length === 11) {
-      return `https://www.youtube.com/embed/${match[2]}?rel=0&modestbranding=1`
+      // Определяем мобильное устройство
+      const isMobile = typeof window !== 'undefined' && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+      
+      // Параметры для решения проблем с мобильными устройствами
+      const mobileParams = isMobile 
+        ? '&playsinline=1&widget_referrer=' + encodeURIComponent(window.location.origin)
+        : ''
+      
+      return `https://www.youtube.com/embed/${match[2]}?rel=0&modestbranding=1&enablejsapi=1&origin=${window.location.origin}${mobileParams}`
     }
     
     return url // Возвращаем оригинальный URL если не удалось распарсить
