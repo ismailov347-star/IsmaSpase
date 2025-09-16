@@ -165,28 +165,36 @@ export default function VideoPlayer({ videoUrl, title, onLoad, showControls = fa
               </svg>
             </button>
 
-            {/* Выпадающее меню настроек */}
-            {showSettings && (
-              <div className="absolute bottom-full right-0 mb-2 bg-black/90 backdrop-blur-sm rounded-lg p-3 min-w-[200px] shadow-xl border border-white/10">
-                {/* Скорость воспроизведения */}
-                <div className="mb-4">
-                  <h3 className="text-white text-sm font-medium mb-2">Скорость воспроизведения</h3>
-                  <div className="grid grid-cols-3 gap-2">
-                    {[0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2].map((speed) => (
-                      <button
-                        key={speed}
-                        onClick={() => handleSpeedChange(speed)}
-                        className={`px-3 py-1.5 rounded text-sm transition-all duration-200 ${
-                          playbackSpeed === speed
-                            ? 'bg-red-600 text-white'
-                            : 'bg-white/10 text-white/80 hover:bg-white/20 hover:text-white'
-                        }`}
-                      >
-                        {speed}x
-                      </button>
-                    ))}
-                  </div>
-                </div>
+            {/* Меню настроек */}
+             {showSettings && (
+               <div className="absolute bottom-full right-0 mb-2 bg-white/95 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200/50 overflow-hidden">
+                 {/* Скорость воспроизведения */}
+                 <div className="p-2">
+                   <div className="text-gray-700 text-xs font-medium mb-2 px-2">Скорость</div>
+                   <div className="space-y-1">
+                     {[0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2].map((speed) => (
+                       <button
+                         key={speed}
+                         onClick={() => {
+                           setPlaybackSpeed(speed)
+                           setShowSettings(false)
+                         }}
+                         className={`w-full px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-between ${
+                           playbackSpeed === speed
+                             ? 'bg-blue-500 text-white shadow-sm'
+                             : 'text-gray-700 hover:bg-gray-100 active:bg-gray-200'
+                         }`}
+                       >
+                         <span>{speed}x</span>
+                         {playbackSpeed === speed && (
+                           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                           </svg>
+                         )}
+                       </button>
+                     ))}
+                   </div>
+                 </div>
 
 
               </div>
