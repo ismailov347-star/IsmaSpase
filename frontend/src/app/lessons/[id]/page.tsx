@@ -155,7 +155,7 @@ export default function LessonPage() {
 
       {/* Заголовок урока */}
       <div className="mb-6">
-        <div className="p-6 rounded-2xl border border-cyan-400/35 shadow-[0_0_12px_rgba(0,180,255,0.18),0_0_28px_rgba(0,180,255,0.08)] hover:shadow-[0_0_14px_rgba(0,180,255,0.24),0_0_34px_rgba(0,180,255,0.12)] hover:-translate-y-0.5 transition-all duration-300" style={{background: 'rgba(20,22,28,0.18)', backdropFilter: 'blur(4px)'}}>
+        <div className="glass-card p-6 rounded-2xl border border-cyan-400/35 shadow-[0_0_12px_rgba(0,180,255,0.18),0_0_28px_rgba(0,180,255,0.08)] hover:shadow-[0_0_14px_rgba(0,180,255,0.24),0_0_34px_rgba(0,180,255,0.12)] hover:-translate-y-0.5 transition-all duration-300">
           <h1 className="text-3xl font-bold text-white mb-4">{lesson.title}</h1>
           <p className="text-lg text-white/70 mb-6">{lesson.description}</p>
           
@@ -175,7 +175,7 @@ export default function LessonPage() {
             <ButtonCta
               onClick={toggleCompletion}
               label={lesson.is_completed ? 'Снять отметку' : 'Отметить как пройденный'}
-              className="text-xs px-6 py-3 whitespace-nowrap overflow-hidden text-ellipsis max-w-[180px]"
+              className="text-xs px-4 py-2.5 whitespace-nowrap overflow-hidden text-ellipsis max-w-[220px]"
             />
           </div>
         </div>
@@ -183,7 +183,7 @@ export default function LessonPage() {
 
       {/* Видео */}
       <div className="mb-6">
-        <div className="p-6 rounded-2xl border border-cyan-400/35 shadow-[0_0_12px_rgba(0,180,255,0.18),0_0_28px_rgba(0,180,255,0.08)] hover:shadow-[0_0_14px_rgba(0,180,255,0.24),0_0_34px_rgba(0,180,255,0.12)] hover:-translate-y-0.5 transition-all duration-300" style={{background: 'rgba(20,22,28,0.18)', backdropFilter: 'blur(4px)'}}>
+        <div className="glass-card p-6 rounded-2xl border border-cyan-400/35 shadow-[0_0_12px_rgba(0,180,255,0.18),0_0_28px_rgba(0,180,255,0.08)] hover:shadow-[0_0_14px_rgba(0,180,255,0.24),0_0_34px_rgba(0,180,255,0.12)] hover:-translate-y-0.5 transition-all duration-300">
           {!videoLoaded && (
             <div className="aspect-video bg-gray-900/50 rounded-lg flex items-center justify-center mb-4">
               <div className="text-center">
@@ -218,7 +218,7 @@ export default function LessonPage() {
 
       {/* Дополнительная информация */}
       <div className="mb-6">
-        <div className="p-6 rounded-2xl border border-cyan-400/35 shadow-[0_0_12px_rgba(0,180,255,0.18),0_0_28px_rgba(0,180,255,0.08)] hover:shadow-[0_0_14px_rgba(0,180,255,0.24),0_0_34px_rgba(0,180,255,0.12)] hover:-translate-y-0.5 transition-all duration-300" style={{background: 'rgba(20,22,28,0.18)', backdropFilter: 'blur(4px)'}}>
+        <div className="glass-card p-6 rounded-2xl border border-cyan-400/35 shadow-[0_0_12px_rgba(0,180,255,0.18),0_0_28px_rgba(0,180,255,0.08)] hover:shadow-[0_0_14px_rgba(0,180,255,0.24),0_0_34px_rgba(0,180,255,0.12)] hover:-translate-y-0.5 transition-all duration-300">
           <h3 className="text-lg font-semibold text-white mb-3">💡 Совет</h3>
           <p className="text-white/70">
             Для лучшего усвоения материала рекомендуем:

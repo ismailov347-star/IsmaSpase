@@ -212,7 +212,7 @@ export default function TopicPage() {
         <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-3 sm:mb-4 leading-tight">{topic.title}</h1>
         <p className="text-sm sm:text-base lg:text-lg text-white/70 mb-4 sm:mb-6 leading-relaxed">{topic.description}</p>
         
-        <div className="p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-cyan-400/35 shadow-[0_0_12px_rgba(0,180,255,0.18),0_0_28px_rgba(0,180,255,0.08)] mb-6 sm:mb-8" style={{background: 'rgba(20,22,28,0.18)', backdropFilter: 'blur(4px)'}}>
+        <div className="glass-card p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-cyan-400/35 shadow-[0_0_12px_rgba(0,180,255,0.18),0_0_28px_rgba(0,180,255,0.08)] mb-6 sm:mb-8">
           <div className="flex justify-between items-center mb-2">
             <h3 className="text-base sm:text-lg font-semibold text-white">Прогресс изучения</h3>
             <span className="text-xs sm:text-sm text-white/70">{completedLessons}/4 уроков</span>
@@ -233,7 +233,7 @@ export default function TopicPage() {
         {staticLessons.map((lesson, index) => {
           const isCompleted = lessons.find(l => l.id === lesson.id)?.is_completed || false
           return (
-            <div key={lesson.id} className="p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-cyan-400/35 shadow-[0_0_12px_rgba(0,180,255,0.18),0_0_28px_rgba(0,180,255,0.08)] hover:shadow-[0_0_14px_rgba(0,180,255,0.24),0_0_34px_rgba(0,180,255,0.12)] hover:-translate-y-0.5 transition-all duration-300" style={{background: 'rgba(20,22,28,0.18)', backdropFilter: 'blur(4px)'}}>
+            <div key={lesson.id} className="glass-card p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-cyan-400/35 shadow-[0_0_12px_rgba(0,180,255,0.18),0_0_28px_rgba(0,180,255,0.08)] hover:shadow-[0_0_14px_rgba(0,180,255,0.24),0_0_34px_rgba(0,180,255,0.12)] hover:-translate-y-0.5 transition-all duration-300">
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4">
                 <div className="flex-1 mb-3 sm:mb-0">
                   <div className="flex flex-col sm:flex-row sm:items-center mb-2">

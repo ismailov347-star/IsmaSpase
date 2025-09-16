@@ -28,7 +28,7 @@ export default function Home() {
 
       {/* Single Theme Card */}
        <div id="topics-section" className="max-w-md mx-auto">
-         <div className="p-8 rounded-2xl border border-cyan-400/35 shadow-[0_0_12px_rgba(0,180,255,0.18),0_0_28px_rgba(0,180,255,0.08)] hover:shadow-[0_0_16px_rgba(0,180,255,0.25),0_0_35px_rgba(0,180,255,0.12)] hover:-translate-y-0.5 transition-all duration-300" style={{background: 'rgba(20,22,28,0.18)', backdropFilter: 'blur(4px)'}}>
+         <div className="glass-card p-8 rounded-2xl border border-cyan-400/35 shadow-[0_0_12px_rgba(0,180,255,0.18),0_0_28px_rgba(0,180,255,0.08)] hover:shadow-[0_0_16px_rgba(0,180,255,0.25),0_0_35px_rgba(0,180,255,0.12)] hover:-translate-y-0.5 transition-all duration-300">
            <h3 className="text-2xl font-bold text-white mb-4">
              Практикум<br/>
              «СИСТЕМА ЛЁГКОГО КОНТЕНТА»

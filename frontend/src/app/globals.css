@@ -47,6 +47,13 @@ body {
     height: 100%;
     overflow-x: hidden;
   }
+}
+
+/* Класс для карточек с backdrop-filter для устранения предупреждений гидратации */
+.glass-card {
+  background: rgba(20, 22, 28, 0.18);
+  backdrop-filter: blur(4px);
+}
   
   * {
     -webkit-touch-callout: none;
@@ -64,7 +71,6 @@ body {
     -ms-user-select: text;
     user-select: text;
   }
-}
 
 /* iOS специфичные исправления */
 @supports (-webkit-touch-callout: none) {
