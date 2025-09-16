@@ -68,7 +68,7 @@ export default function VideoPlayer({ videoUrl, title, onLoad, showControls = fa
   // Применение скорости и закрытие модального окна
   const applySpeedAndClose = (speed: number) => {
     handleSpeedChange(speed)
-    setShowSettings(false)
+    setShowSpeedButtons(false)
   }
 
 
