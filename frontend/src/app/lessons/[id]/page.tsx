@@ -173,7 +173,7 @@ export default function LessonPage() {
           )}
           
           <VideoPlayer
-            videoUrl={lesson.video_url}
+            videoUrl={getYouTubeEmbedUrl(lesson.video_url)}
             title={lesson.title}
             onLoad={() => setVideoLoaded(true)}
           />
@@ -184,10 +184,11 @@ export default function LessonPage() {
               label="Открыть в YouTube"
               className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 text-xs"
               onClick={() => {
-                // Конвертируем embed URL в обычный YouTube URL
-                const videoId = lesson.video_url.match(/embed\/([^?]+)/)?.[1]
-                if (videoId) {
-                  window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank')
+                // Извлекаем ID видео из оригинального URL
+                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/
+                const match = lesson.video_url.match(regExp)
+                if (match && match[2].length === 11) {
+                  window.open(`https://www.youtube.com/watch?v=${match[2]}`, '_blank')
                 }
               }}
             />
