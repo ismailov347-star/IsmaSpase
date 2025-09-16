@@ -175,6 +175,7 @@ export default function LessonPage() {
             <ButtonCta
               onClick={toggleCompletion}
               label={lesson.is_completed ? 'Снять отметку' : 'Отметить как пройденный'}
+              className="text-xs px-6 py-3 whitespace-nowrap overflow-hidden text-ellipsis max-w-[180px]"
             />
           </div>
         </div>
