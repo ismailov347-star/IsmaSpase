@@ -21,6 +21,7 @@ export default function LessonPage() {
   const [lesson, setLesson] = useState<Lesson | null>(null)
   const [loading, setLoading] = useState(true)
   const [videoLoaded, setVideoLoaded] = useState(false)
+  const [showVideoControls, setShowVideoControls] = useState(false)
 
   // Статические данные уроков
   const staticLessons = [
@@ -129,7 +130,11 @@ export default function LessonPage() {
   }
 
   return (
-    <div className="px-4 py-8 max-w-4xl mx-auto">
+    <div 
+      className="px-4 py-8 max-w-4xl mx-auto"
+      onMouseEnter={() => setShowVideoControls(true)}
+      onMouseLeave={() => setShowVideoControls(false)}
+    >
       {/* Навигация */}
       <div className="mb-6">
         <Link href={`/topics/${lesson.topic_id}`} className="block focus:outline-none">
@@ -176,6 +181,7 @@ export default function LessonPage() {
             videoUrl={getYouTubeEmbedUrl(lesson.video_url)}
             title={lesson.title}
             onLoad={() => setVideoLoaded(true)}
+            showControls={showVideoControls}
           />
           
           {/* Кнопка для открытия видео в YouTube - вынесена за пределы видео */}

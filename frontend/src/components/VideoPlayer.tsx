@@ -7,12 +7,13 @@ interface VideoPlayerProps {
   videoUrl: string
   title: string
   onLoad?: () => void
+  showControls?: boolean
 }
 
-export default function VideoPlayer({ videoUrl, title, onLoad }: VideoPlayerProps) {
+export default function VideoPlayer({ videoUrl, title, onLoad, showControls = false }: VideoPlayerProps) {
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [playbackRate, setPlaybackRate] = useState(1)
-  const [showControls, setShowControls] = useState(false)
+  // Удалено внутреннее состояние showControls, теперь используется пропс
   const containerRef = useRef<HTMLDivElement>(null)
   const iframeRef = useRef<HTMLIFrameElement>(null)
 
@@ -81,8 +82,7 @@ export default function VideoPlayer({ videoUrl, title, onLoad }: VideoPlayerProp
           ? 'fixed inset-0 z-50 bg-black flex items-center justify-center' 
           : 'aspect-video bg-gray-900/50 rounded-lg overflow-hidden'
       }`}
-      onMouseEnter={() => setShowControls(true)}
-      onMouseLeave={() => setShowControls(false)}
+      // Убрано управление showControls на уровне видео
     >
       <iframe
         ref={iframeRef}
@@ -104,7 +104,7 @@ export default function VideoPlayer({ videoUrl, title, onLoad }: VideoPlayerProp
           {/* Кнопка полноэкранного режима */}
           <button
             onClick={toggleFullscreen}
-            className="bg-black/80 hover:bg-black/95 text-white p-3 rounded-full transition-all duration-300 backdrop-blur-md shadow-lg hover:shadow-xl hover:scale-110 border border-white/20 hover:border-white/40"
+            className="text-white/80 hover:text-white p-2 rounded transition-all duration-300 hover:scale-110 hover:bg-black/20"
             title={isFullscreen ? 'Выйти из полноэкранного режима' : 'Полноэкранный режим'}
           >
             {isFullscreen ? (
@@ -121,7 +121,7 @@ export default function VideoPlayer({ videoUrl, title, onLoad }: VideoPlayerProp
           {/* Селектор скорости воспроизведения */}
           <div className="relative group">
             <button
-              className="bg-black/80 hover:bg-black/95 text-white p-3 rounded-full transition-all duration-300 backdrop-blur-md shadow-lg hover:shadow-xl hover:scale-110 border border-white/20 hover:border-white/40 flex items-center justify-center"
+              className="text-white/80 hover:text-white p-2 rounded transition-all duration-300 hover:scale-110 hover:bg-black/20 flex items-center justify-center"
               title="Скорость воспроизведения"
               onClick={() => {
                 const currentIndex = playbackRates.indexOf(playbackRate)
@@ -137,7 +137,7 @@ export default function VideoPlayer({ videoUrl, title, onLoad }: VideoPlayerProp
             
             {/* Выпадающий список скоростей */}
             <div className="absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto">
-              <div className="bg-black/90 backdrop-blur-md rounded-lg border border-white/20 shadow-xl p-1 min-w-[80px]">
+              <div className="bg-black/95 backdrop-blur-md rounded-md shadow-xl p-1 min-w-[70px]">
                 {playbackRates.map(rate => (
                   <button
                     key={rate}
@@ -158,12 +158,12 @@ export default function VideoPlayer({ videoUrl, title, onLoad }: VideoPlayerProp
         
         {/* Индикатор скорости в левом нижнем углу */}
         {playbackRate !== 1 && (
-          <div className="absolute bottom-4 left-4 bg-black/80 text-white px-4 py-2 rounded-full text-sm backdrop-blur-md shadow-lg border border-white/20">
-            <div className="flex items-center gap-2">
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+          <div className="absolute bottom-4 left-4 text-white/90 px-3 py-1 rounded text-sm bg-black/40 backdrop-blur-sm">
+            <div className="flex items-center gap-1">
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M13,8V16L18.5,12M4,12A8,8 0 0,1 12,4C12.74,4 13.45,4.12 14.12,4.34L15.54,2.92C14.43,2.33 13.24,2 12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12H20A8,8 0 0,1 12,20A8,8 0 0,1 4,12Z"/>
               </svg>
-              <span className="font-semibold">{playbackRate}x</span>
+              <span className="font-medium">{playbackRate}x</span>
             </div>
           </div>
         )}
