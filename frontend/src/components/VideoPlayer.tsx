@@ -67,9 +67,25 @@ export default function VideoPlayer({ videoUrl, title, onLoad, showControls = fa
   }
 
   // Обработка блокировки экрана
-  const toggleScreenLock = () => {
-    setIsScreenLocked(!isScreenLocked)
+  const toggleScreenLock = async () => {
+    const newLockState = !isScreenLocked
+    setIsScreenLocked(newLockState)
     setShowSettings(false)
+    
+    // Автоматический переход в полноэкранный режим при блокировке
+    if (newLockState && containerRef.current && !document.fullscreenElement) {
+      try {
+        await containerRef.current.requestFullscreen()
+        setIsFullscreen(true)
+      } catch (error) {
+        console.error('Ошибка при переходе в полноэкранный режим:', error)
+      }
+    }
+  }
+
+  // Обработка клика по заблокированному экрану для разблокировки
+  const handleLockedScreenClick = () => {
+    setIsScreenLocked(false)
   }
 
   // Закрытие настроек при клике вне области
@@ -121,12 +137,19 @@ export default function VideoPlayer({ videoUrl, title, onLoad, showControls = fa
       
       {/* Overlay для блокировки экрана */}
       {isScreenLocked && (
-        <div className="absolute inset-0 bg-black/20 backdrop-blur-[1px] flex items-center justify-center z-10 pointer-events-auto">
-          <div className="bg-black/80 text-white px-6 py-3 rounded-lg backdrop-blur-sm flex items-center gap-3">
-            <svg className="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 24 24">
+        <div 
+          className="absolute inset-0 bg-black/30 backdrop-blur-[2px] flex items-center justify-center z-10 pointer-events-auto cursor-pointer"
+          onClick={handleLockedScreenClick}
+          title="Нажмите для разблокировки"
+        >
+          <div className="bg-black/70 text-white px-8 py-4 rounded-xl backdrop-blur-sm flex flex-col items-center gap-3 pointer-events-none">
+            <svg className="w-8 h-8 text-red-400" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12,17A2,2 0 0,0 14,15C14,13.89 13.1,13 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V10C4,8.89 4.9,8 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z"/>
             </svg>
-            <span className="text-sm font-medium">Экран заблокирован</span>
+            <div className="text-center">
+              <div className="text-lg font-medium mb-1">Экран заблокирован</div>
+              <div className="text-sm text-white/70">Нажмите для разблокировки</div>
+            </div>
           </div>
         </div>
       )}
