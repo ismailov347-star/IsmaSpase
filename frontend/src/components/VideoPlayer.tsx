@@ -99,7 +99,8 @@ export default function VideoPlayer({ videoUrl, title, onLoad, showControls = fa
   return (
     <div 
       ref={containerRef}
-      className={`relative group ${
+      onClick={toggleFullscreen}
+      className={`relative group cursor-pointer ${
         isFullscreen 
           ? 'fixed inset-0 z-50 bg-black flex items-center justify-center' 
           : 'aspect-video bg-gray-900/50 rounded-lg overflow-hidden'
@@ -124,7 +125,10 @@ export default function VideoPlayer({ videoUrl, title, onLoad, showControls = fa
         <div className="absolute bottom-4 right-4 flex flex-row-reverse gap-3 pointer-events-auto">
           {/* Кнопка полноэкранного режима */}
           <button
-            onClick={toggleFullscreen}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleFullscreen();
+            }}
             className="text-white/80 hover:text-white p-2 rounded transition-all duration-300 hover:scale-110 hover:bg-black/20"
             title={isFullscreen ? 'Выйти из полноэкранного режима' : 'Полноэкранный режим'}
           >
@@ -141,7 +145,10 @@ export default function VideoPlayer({ videoUrl, title, onLoad, showControls = fa
 
           {/* Кнопка настроек */}
            <button
-             onClick={() => setShowSpeedButtons(!showSpeedButtons)}
+             onClick={(e) => {
+               e.stopPropagation();
+               setShowSpeedButtons(!showSpeedButtons);
+             }}
              className="p-2 rounded-full text-white hover:bg-white/20 transition-colors"
              title="Настройки скорости"
            >
@@ -157,11 +164,12 @@ export default function VideoPlayer({ videoUrl, title, onLoad, showControls = fa
                {[0.5, 0.75, 1, 1.25, 1.5, 2].map((speed) => (
                  <button
                    key={speed}
-                   onClick={() => {
+                   onClick={(e) => {
+                     e.stopPropagation();
                      handleSpeedChange(speed);
                      setShowSpeedButtons(false);
                    }}
-                   className={`px-2 py-1 text-sm font-medium transition-colors ${
+                   className={`px-2 py-1 text-sm font-medium transition-colors bg-black/10 rounded ${
                      playbackSpeed === speed 
                        ? 'text-blue-400' 
                        : 'text-white/70 hover:text-white'
