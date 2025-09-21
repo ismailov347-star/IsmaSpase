@@ -56,8 +56,6 @@ const FlickeringGrid: React.FC<FlickeringGridProps> = ({
       const dpr = window.devicePixelRatio || 1;
       canvas.width = width * dpr;
       canvas.height = height * dpr;
-      canvas.style.width = `${width}px`;
-      canvas.style.height = `${height}px`;
       const cols = Math.floor(width / (squareSize + gridGap));
       const rows = Math.floor(height / (squareSize + gridGap));
 
@@ -182,11 +180,7 @@ const FlickeringGrid: React.FC<FlickeringGridProps> = ({
     <div ref={containerRef} className={`w-full h-full ${className}`}>
       <canvas
         ref={canvasRef}
-        className="pointer-events-none"
-        style={{
-          width: canvasSize.width,
-          height: canvasSize.height,
-        }}
+        className="pointer-events-none w-full h-full"
       />
     </div>
   );

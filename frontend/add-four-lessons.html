@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавить 4 урока</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .lesson { border: 1px solid #ddd; margin: 10px 0; padding: 15px; border-radius: 5px; }
+        button { background: #007cba; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 5px; }
+        button:hover { background: #005a87; }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+        input, textarea { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ddd; border-radius: 3px; }
+        textarea { height: 80px; }
+    </style>
+</head>
+<body>
+    <h1>Замена уроков для темы "Контент-маркетинг"</h1>
+    
+    <div style="background: #f0f8ff; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+        <h3>Инструкция:</h3>
+        <ol>
+            <li>Сначала нажмите "Удалить все старые уроки"</li>
+            <li>Затем нажмите "Добавить все 4 урока"</li>
+            <li>Проверьте результат на <a href="http://localhost:3000/topics/2" target="_blank">http://localhost:3000/topics/2</a></li>
+        </ol>
+    </div>
+
+    <button onclick="deleteOldLessons()" style="background: #dc3545;">Удалить все старые уроки</button>
+    <button onclick="addAllLessons()">Добавить все 4 урока</button>
+    
+    <div id="status"></div>
+
+    <h2>Уроки для добавления:</h2>
+    
+    <div class="lesson">
+        <h3>1. Упаковка блога</h3>
+        <p><strong>Описание:</strong> Изучите принципы эффективной упаковки блога для привлечения и удержания читателей.</p>
+        <p><strong>Контент:</strong> Правильная упаковка блога включает в себя создание привлекательного дизайна, структурирование контента и оптимизацию пользовательского опыта.</p>
+    </div>
+    
+    <div class="lesson">
+        <h3>2. Система идей — «Контент без ступора»</h3>
+        <p><strong>Описание:</strong> Освойте систему генерации идей для создания контента без творческих блоков.</p>
+        <p><strong>Контент:</strong> Эффективная система идей помогает постоянно генерировать свежий и интересный контент, избегая творческого ступора.</p>
+    </div>
+    
+    <div class="lesson">
+        <h3>3. Суть текстовых рилс. Формула захвата внимания</h3>
+        <p><strong>Описание:</strong> Изучите формулу создания текстовых рилс, которые захватывают внимание аудитории.</p>
+        <p><strong>Контент:</strong> Текстовые рилс требуют особого подхода к созданию контента, который мгновенно привлекает внимание и удерживает зрителя.</p>
+    </div>
+    
+    <div class="lesson">
+        <h3>4. Публикации-карусели — «Листай, не отпускай»</h3>
+        <p><strong>Описание:</strong> Научитесь создавать увлекательные публикации-карусели, которые заставляют пользователей листать до конца.</p>
+        <p><strong>Контент:</strong> Карусельные публикации — мощный инструмент для удержания внимания и передачи большого объема информации в интерактивном формате.</p>
+    </div>
+
+    <script>
+        const lessons = [
+            {
+                title: "Упаковка блога",
+                description: "Изучите принципы эффективной упаковки блога для привлечения и удержания читателей.",
+                content: "Правильная упаковка блога включает в себя создание привлекательного дизайна, структурирование контента и оптимизацию пользовательского опыта.",
+                videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                order: 1,
+                topicId: 2
+            },
+            {
+                title: "Система идей — «Контент без ступора»",
+                description: "Освойте систему генерации идей для создания контента без творческих блоков.",
+                content: "Эффективная система идей помогает постоянно генерировать свежий и интересный контент, избегая творческого ступора.",
+                videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                order: 2,
+                topicId: 2
+            },
+            {
+                title: "Суть текстовых рилс. Формула захвата внимания",
+                description: "Изучите формулу создания текстовых рилс, которые захватывают внимание аудитории.",
+                content: "Текстовые рилс требуют особого подхода к созданию контента, который мгновенно привлекает внимание и удерживает зрителя.",
+                videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                order: 3,
+                topicId: 2
+            },
+            {
+                title: "Публикации-карусели — «Листай, не отпускай»",
+                description: "Научитесь создавать увлекательные публикации-карусели, которые заставляют пользователей листать до конца.",
+                content: "Карусельные публикации — мощный инструмент для удержания внимания и передачи большого объема информации в интерактивном формате.",
+                videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                order: 4,
+                topicId: 2
+            }
+        ];
+
+        async function deleteOldLessons() {
+            const status = document.getElementById('status');
+            status.innerHTML = '🔄 Удаляю старые уроки...';
+            
+            try {
+                // Сначала получаем все уроки темы 2
+                const response = await fetch('/api/lessons');
+                const allLessons = await response.json();
+                const topicLessons = allLessons.filter(lesson => lesson.topicId === 2);
+                
+                // Удаляем каждый урок
+                for (const lesson of topicLessons) {
+                    await fetch(`/api/lessons/${lesson.id}`, {
+                        method: 'DELETE'
+                    });
+                }
+                
+                status.innerHTML = `<div class="success">✅ Удалено ${topicLessons.length} старых уроков</div>`;
+            } catch (error) {
+                status.innerHTML = `<div class="error">❌ Ошибка при удалении: ${error.message}</div>`;
+            }
+        }
+
+        async function addAllLessons() {
+            const status = document.getElementById('status');
+            status.innerHTML = '🔄 Добавляю новые уроки...';
+            
+            try {
+                let addedCount = 0;
+                
+                for (const lesson of lessons) {
+                    const response = await fetch('/api/lessons', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(lesson)
+                    });
+                    
+                    if (response.ok) {
+                        addedCount++;
+                        status.innerHTML = `🔄 Добавлено ${addedCount} из ${lessons.length} уроков...`;
+                    } else {
+                        throw new Error(`Ошибка при добавлении урока: ${lesson.title}`);
+                    }
+                }
+                
+                status.innerHTML = `<div class="success">🎉 Успешно добавлено ${addedCount} уроков!<br>Проверьте результат: <a href="http://localhost:3000/topics/2" target="_blank">http://localhost:3000/topics/2</a></div>`;
+            } catch (error) {
+                status.innerHTML = `<div class="error">❌ Ошибка при добавлении: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>

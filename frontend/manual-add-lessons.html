@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавление уроков по контент-маркетингу</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .lesson-form {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background-color: #fafafa;
+        }
+        .lesson-form h3 {
+            color: #555;
+            margin-top: 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        input[type="text"], input[type="url"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .delete-btn {
+            background-color: #dc3545;
+        }
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .instructions {
+            background-color: #e7f3ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Замена уроков темы "Контент-маркетинг"</h1>
+        
+        <div class="instructions">
+            <strong>Инструкция:</strong>
+            <ol>
+                <li>Сначала нажмите "Удалить все уроки темы 2" для очистки</li>
+                <li>Затем добавьте каждый урок, нажимая "Добавить урок"</li>
+                <li>Проверьте результат на странице: <a href="http://localhost:3000/topics/2" target="_blank">http://localhost:3000/topics/2</a></li>
+            </ol>
+        </div>
+
+        <button onclick="deleteAllLessons()" class="delete-btn">🗑️ Удалить все уроки темы 2</button>
+        
+        <div class="lesson-form">
+            <h3>📚 Урок 1: Упаковка блога</h3>
+            <label for="title1">Название:</label>
+            <input type="text" id="title1" value="Упаковка блога">
+            
+            <label for="video1">URL видео:</label>
+            <input type="url" id="video1" value="https://miro.com/app/board/uXjVJRG4MJs=/?playRecording=67075cf5-24c9-4ecb-8edd-9738c2c9555a">
+            
+            <button onclick="addLesson(1)">➕ Добавить урок 1</button>
+        </div>
+
+        <div class="lesson-form">
+            <h3>💡 Урок 2: Система идей — «Контент без ступора»</h3>
+            <label for="title2">Название:</label>
+            <input type="text" id="title2" value="Система идей — «Контент без ступора»">
+            
+            <label for="video2">URL видео:</label>
+            <input type="url" id="video2" value="https://www.youtube.com/embed/content-ideas-system">
+            
+            <button onclick="addLesson(2)">➕ Добавить урок 2</button>
+        </div>
+
+        <div class="lesson-form">
+            <h3>🎬 Урок 3: Суть текстовых рилс. Формула захвата внимания</h3>
+            <label for="title3">Название:</label>
+            <input type="text" id="title3" value="Суть текстовых рилс. Формула захвата внимания">
+            
+            <label for="video3">URL видео:</label>
+            <input type="url" id="video3" value="https://www.youtube.com/embed/text-reels-formula">
+            
+            <button onclick="addLesson(3)">➕ Добавить урок 3</button>
+        </div>
+
+        <div class="lesson-form">
+            <h3>📱 Урок 4: Публикации-карусели — «Листай, не отпускай»</h3>
+            <label for="title4">Название:</label>
+            <input type="text" id="title4" value="Публикации-карусели — «Листай, не отпускай»">
+            
+            <label for="video4">URL видео:</label>
+            <input type="url" id="video4" value="https://www.youtube.com/embed/carousel-posts-guide">
+            
+            <button onclick="addLesson(4)">➕ Добавить урок 4</button>
+        </div>
+
+        <div id="status" class="status"></div>
+    </div>
+
+    <script>
+        function showStatus(message, isError = false) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${isError ? 'error' : 'success'}`;
+            status.style.display = 'block';
+            
+            setTimeout(() => {
+                status.style.display = 'none';
+            }, 5000);
+        }
+
+        async function deleteAllLessons() {
+            try {
+                showStatus('🔄 Удаляем все уроки темы 2...');
+                
+                // Получаем все уроки темы 2
+                const response = await fetch('/api/topics/2');
+                if (!response.ok) {
+                    throw new Error(`Ошибка получения темы: ${response.status}`);
+                }
+                
+                const topic = await response.json();
+                
+                // Удаляем каждый урок
+                for (const lesson of topic.lessons) {
+                    const deleteResponse = await fetch(`/api/lessons/${lesson.id}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (!deleteResponse.ok) {
+                        console.error(`Ошибка удаления урока ${lesson.id}`);
+                    }
+                }
+                
+                showStatus(`✅ Удалено ${topic.lessons.length} уроков из темы 2`);
+                
+            } catch (error) {
+                showStatus(`❌ Ошибка удаления: ${error.message}`, true);
+            }
+        }
+
+        async function addLesson(lessonNumber) {
+            try {
+                const title = document.getElementById(`title${lessonNumber}`).value;
+                const videoUrl = document.getElementById(`video${lessonNumber}`).value;
+                
+                if (!title || !videoUrl) {
+                    showStatus('❌ Заполните все поля', true);
+                    return;
+                }
+                
+                showStatus(`🔄 Добавляем урок ${lessonNumber}...`);
+                
+                const response = await fetch('/api/topics/2/lessons', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        title: title,
+                        videoUrl: videoUrl,
+                        topicId: 2,
+                        isLocked: false
+                    })
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`${response.status}: ${errorText}`);
+                }
+                
+                const createdLesson = await response.json();
+                showStatus(`✅ Урок "${createdLesson.title}" успешно добавлен!`);
+                
+            } catch (error) {
+                showStatus(`❌ Ошибка добавления урока: ${error.message}`, true);
+            }
+        }
+    </script>
+</body>
+</html>

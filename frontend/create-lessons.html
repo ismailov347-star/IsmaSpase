@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создание уроков</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        .lesson {
+            background: #2a2a2a;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #444;
+        }
+        button {
+            background: #0066cc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0052a3;
+        }
+        .success {
+            color: #4CAF50;
+        }
+        .error {
+            color: #f44336;
+        }
+        #log {
+            background: #333;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>Создание уроков "Система лёгкого контента"</h1>
+    
+    <div id="topics"></div>
+    
+    <button onclick="createTopic()">Создать тему</button>
+    <button onclick="createLessons()">Создать все уроки</button>
+    <button onclick="checkLessons()">Проверить уроки</button>
+    
+    <div id="log"></div>
+
+    <script>
+        let targetTopicId = null;
+        
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : '';
+            logDiv.innerHTML += `<span class="${className}">[${timestamp}] ${message}</span>\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        async function loadTopics() {
+            try {
+                const response = await fetch('/api/topics');
+                const topics = await response.json();
+                
+                const topicsDiv = document.getElementById('topics');
+                topicsDiv.innerHTML = '<h2>Существующие темы:</h2>';
+                
+                topics.forEach(topic => {
+                    const div = document.createElement('div');
+                    div.className = 'lesson';
+                    div.innerHTML = `<strong>${topic.title}</strong><br>${topic.description || ''}`;
+                    topicsDiv.appendChild(div);
+                    
+                    if (topic.title.includes('Система лёгкого контента')) {
+                        targetTopicId = topic.id;
+                        log(`Найдена целевая тема: ${topic.title} (ID: ${topic.id})`, 'success');
+                    }
+                });
+                
+                log(`Загружено тем: ${topics.length}`);
+            } catch (error) {
+                log(`Ошибка загрузки тем: ${error.message}`, 'error');
+            }
+        }
+        
+        async function createTopic() {
+            try {
+                const response = await fetch('/api/topics', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        title: 'Система лёгкого контента',
+                        description: 'Практикум по созданию контента без выгорания'
+                    })
+                });
+                
+                if (response.ok) {
+                    const topic = await response.json();
+                    targetTopicId = topic.id;
+                    log(`Тема создана: ${topic.title} (ID: ${topic.id})`, 'success');
+                    loadTopics();
+                } else {
+                    const error = await response.text();
+                    log(`Ошибка создания темы: ${error}`, 'error');
+                }
+            } catch (error) {
+                log(`Ошибка создания темы: ${error.message}`, 'error');
+            }
+        }
+        
+        async function createLessons() {
+            if (!targetTopicId) {
+                log('Сначала создайте или выберите тему', 'error');
+                return;
+            }
+            
+            const lessons = [
+                {
+                    title: 'УПАКОВКА БЛОГА',
+                    description: 'как оформить профиль так, чтобы подписывались и оставались.',
+                    videoUrl: 'https://miro.com/app/board/uXjVJRG4MJs=/?playRecording=67075cf5-24c9-4ecb-8edd-9738c2c9555a',
+                    topicId: targetTopicId,
+                    order: 1
+                },
+                {
+                    title: 'СИСТЕМА ИДЕЙ — «КОНТЕНТ БЕЗ СТУПОРА»',
+                    description: 'как генерировать идеи каждый день и не выгорать.',
+                    videoUrl: 'https://www.youtube.com/embed/YYYY?rel=0',
+                    topicId: targetTopicId,
+                    order: 2
+                },
+                {
+                    title: 'СУТЬ ТЕКСТОВЫХ РИЛС. ФОРМУЛА ЗАХВАТА ВНИМАНИЯ',
+                    description: 'структура заголовка и подача, чтобы ролики брали охваты.',
+                    videoUrl: 'https://www.youtube.com/embed/ZZZZ?rel=0',
+                    topicId: targetTopicId,
+                    order: 3
+                },
+                {
+                    title: 'ПУБЛИКАЦИИ-КАРУСЕЛИ — «ЛИСТАЙ, НЕ ОТПУСКАЙ»',
+                    description: 'сценарии, ритм и оформление каруселей, которые дочитывают.',
+                    videoUrl: 'https://www.youtube.com/embed/WWWW?rel=0',
+                    topicId: targetTopicId,
+                    order: 4
+                }
+            ];
+            
+            log('Начинаем создание уроков...');
+            
+            for (const lessonData of lessons) {
+                try {
+                    const response = await fetch('/api/lessons', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(lessonData)
+                    });
+                    
+                    if (response.ok) {
+                        const lesson = await response.json();
+                        log(`✓ Создан урок: ${lesson.title}`, 'success');
+                    } else {
+                        const error = await response.text();
+                        log(`✗ Ошибка создания урока "${lessonData.title}": ${error}`, 'error');
+                    }
+                } catch (error) {
+                    log(`✗ Ошибка создания урока "${lessonData.title}": ${error.message}`, 'error');
+                }
+            }
+            
+            log('Создание уроков завершено!');
+        }
+        
+        async function checkLessons() {
+            try {
+                const response = await fetch('/api/lessons');
+                const lessons = await response.json();
+                
+                log(`Найдено уроков: ${lessons.length}`);
+                
+                lessons.forEach((lesson, index) => {
+                    log(`${index + 1}. ${lesson.title} (Тема: ${lesson.topic?.title || 'Не найдена'})`);
+                });
+            } catch (error) {
+                log(`Ошибка проверки уроков: ${error.message}`, 'error');
+            }
+        }
+        
+        // Загружаем темы при загрузке страницы
+        window.onload = loadTopics;
+    </script>
+</body>
+</html>

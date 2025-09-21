@@ -1,0 +1,1 @@
+SELECT id, title FROM Lesson WHERE topicId = 2 ORDER BY id;

@@ -15,6 +15,15 @@ const nextConfig = {
   swcMinify: true,
   // Enable React strict mode
   reactStrictMode: true,
+  // API proxy configuration
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'http://localhost:3002/api/:path*',
+      },
+    ]
+  },
 }
 
 module.exports = nextConfig

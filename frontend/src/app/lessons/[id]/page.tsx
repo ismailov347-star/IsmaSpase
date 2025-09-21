@@ -1,94 +1,79 @@
 'use client'
 
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
-import { ButtonCta } from '@/components/ui/button-shiny'
-import Link from 'next/link'
-import VideoPlayer from '@/components/VideoPlayer'
+import { ButtonCta } from '../../../components/ui/button-shiny'
+import VideoPlayer from '../../../components/VideoPlayer'
+import { apiClient } from '@/lib/api'
+import { useAuth } from '@/hooks/useAuth'
 
 interface Lesson {
   id: number
   title: string
-  description: string
-  video_url: string
-  topic_id: number
-  topic_title: string
-  is_completed: boolean
+  description?: string
+  videoUrl: string
+  topicId: number
+  isLocked: boolean
+}
+
+interface Topic {
+  id: number
+  title: string
+  description?: string
+  isLocked: boolean
 }
 
 export default function LessonPage() {
   const params = useParams()
+  const router = useRouter()
+  const lessonId = params.id as string
+  
   const [lesson, setLesson] = useState<Lesson | null>(null)
+  const [topic, setTopic] = useState<Topic | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [videoLoaded, setVideoLoaded] = useState(false)
   const [showVideoControls, setShowVideoControls] = useState(false)
 
-  // Статические данные уроков
-  const staticLessons = [
-    {
-      id: 1,
-      title: "УПАКОВКА БЛОГА",
-      description: "как оформить профиль так, чтобы подписывались и оставались.",
-      youtubeUrl: "https://youtu.be/O4wPUbiUKZo?si=sNGL6i1exLdry-tY",
-      topic_id: 1,
-      topic_title: "Практикум «СИСТЕМА ЛЁГКОГО КОНТЕНТА»"
-    },
-    {
-      id: 2,
-      title: "СИСТЕМА ИДЕЙ «КОНТЕНТ БЕЗ СТУПОРА»",
-      description: "как генерировать идеи каждый день и не выгорать.",
-      youtubeUrl: "https://www.youtube.com/embed/YYYY?rel=0",
-      topic_id: 1,
-      topic_title: "Практикум «СИСТЕМА ЛЁГКОГО КОНТЕНТА»"
-    },
-    {
-      id: 3,
-      title: "ТЕКСТОВЫЕ РИЛС: ФОРМУЛА ЗАХВАТА ВНИМАНИЯ",
-      description: "структура заголовка и подача, чтобы ролики брали охваты.",
-      youtubeUrl: "https://www.youtube.com/embed/ZZZZ?rel=0",
-      topic_id: 1,
-      topic_title: "Практикум «СИСТЕМА ЛЁГКОГО КОНТЕНТА»"
-    },
-    {
-      id: 4,
-      title: "ПУБЛИКАЦИИ-КАРУСЕЛИ «ЛИСТАЙ, НЕ ОТПУСКАЙ»",
-      description: "сценарии, ритм и оформление каруселей, которые дочитывают.",
-      youtubeUrl: "https://www.youtube.com/embed/WWWW?rel=0",
-      topic_id: 1,
-      topic_title: "Практикум «СИСТЕМА ЛЁГКОГО КОНТЕНТА»"
-    }
-  ]
-
   useEffect(() => {
-    if (params.id) {
+    if (lessonId) {
       fetchLessonData()
     }
-  }, [params.id])
+  }, [lessonId])
+
+  const { isAuthenticated } = useAuth()
 
   const fetchLessonData = async () => {
     try {
-      // Используем статические данные вместо API
-      const lessonId = parseInt(params.id as string)
-      const staticLesson = staticLessons.find(l => l.id === lessonId)
+      const lessonData = await apiClient.getLesson(lessonId)
       
-      if (staticLesson) {
-        // Загружаем состояние прогресса из localStorage
-        const savedProgress = localStorage.getItem('lessonProgress')
-        const progressData = savedProgress ? JSON.parse(savedProgress) : {}
-        const isCompleted = progressData[lessonId] || false
-        
-        setLesson({
-          id: staticLesson.id,
-          title: staticLesson.title,
-          description: staticLesson.description,
-          video_url: staticLesson.youtubeUrl,
-          topic_id: staticLesson.topic_id,
-          topic_title: staticLesson.topic_title,
-          is_completed: isCompleted
-        })
+      // Преобразуем данные из snake_case в camelCase
+      const mappedLesson: Lesson = {
+        id: lessonData.id,
+        title: lessonData.title,
+        description: lessonData.description,
+        videoUrl: lessonData.video_url,
+        topicId: lessonData.topic_id,
+        isLocked: lessonData.is_locked || false
+      }
+      
+      setLesson(mappedLesson)
+      
+      // Загружаем информацию о теме
+      const topicResponse = await fetch(`/api/topics/${mappedLesson.topicId}`)
+      if (topicResponse.ok) {
+        const topicData = await topicResponse.json()
+        const mappedTopic: Topic = {
+          id: topicData.id,
+          title: topicData.title,
+          description: topicData.description,
+          isLocked: topicData.is_locked || false
+        }
+        setTopic(mappedTopic)
       }
     } catch (error) {
       console.error('Ошибка загрузки урока:', error)
+      setError('Не удалось загрузить урок')
     } finally {
       setLoading(false)
     }
@@ -124,115 +109,137 @@ export default function LessonPage() {
     )
   }
 
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <h2 className="text-2xl font-bold text-white mb-4">{error}</h2>
+        <ButtonCta 
+          label="Вернуться на главную"
+          onNavigate={() => router.push('/')}
+        />
+      </div>
+    )
+  }
+
   if (!lesson) {
     return (
       <div className="text-center py-12">
         <h2 className="text-2xl font-bold text-white mb-4">Урок не найден</h2>
-        <Link href="/">
-          <ButtonCta 
-            label="Вернуться на главную"
-          />
-        </Link>
+        <ButtonCta 
+          label="Вернуться на главную"
+          onNavigate={() => router.push('/')}
+        />
+      </div>
+    )
+  }
+
+  if (lesson.isLocked) {
+    return (
+      <div className="text-center py-12">
+        <div className="text-6xl mb-4">🔒</div>
+        <h2 className="text-2xl font-bold text-white mb-4">Урок заблокирован</h2>
+        <p className="text-white/70 mb-6">Этот урок пока недоступен</p>
+        <ButtonCta 
+          label="Вернуться к теме"
+          onNavigate={() => router.push(`/topics/${lesson.topicId}`)}
+        />
       </div>
     )
   }
 
   return (
-    <div 
-      className="px-4 py-8 max-w-4xl mx-auto"
-      onMouseEnter={() => setShowVideoControls(true)}
-      onMouseLeave={() => setShowVideoControls(false)}
-    >
+    <div className="px-4 py-8 max-w-4xl mx-auto">
       {/* Навигация */}
       <div className="mb-6">
-        <Link href={`/topics/${lesson.topic_id}`} className="block focus:outline-none">
-          <ButtonCta 
-            label="← Назад" 
-            className="mb-4"
-          />
-        </Link>
+        <ButtonCta 
+          label="← Назад к теме"
+          onNavigate={() => router.push(`/topics/${lesson.topicId}`)} 
+          className="mb-4"
+        />
       </div>
 
       {/* Заголовок урока */}
       <div className="mb-6">
         <div className="glass-card p-6 rounded-2xl border border-cyan-400/35 shadow-[0_0_12px_rgba(0,180,255,0.18),0_0_28px_rgba(0,180,255,0.08)] hover:shadow-[0_0_14px_rgba(0,180,255,0.24),0_0_34px_rgba(0,180,255,0.12)] hover:-translate-y-0.5 transition-all duration-300">
-          <h1 className="text-3xl font-bold text-white mb-4">{lesson.title}</h1>
-          <p className="text-lg text-white/70 mb-6">{lesson.description}</p>
-          
-          {/* Статус завершения */}
-          <div className="flex items-center">
-            <div className={`w-3 h-3 rounded-full mr-3 ${
-              lesson.is_completed ? 'bg-green-500' : 'bg-gray-500'
-            }`}></div>
-            <span className={`font-medium ${
-              lesson.is_completed ? 'text-green-400' : 'text-white/50'
-            }`}>
-              {lesson.is_completed ? 'Урок пройден' : 'Урок не пройден'}
-            </span>
+          <div className="flex items-center justify-between mb-4">
+            <h1 className="text-3xl font-bold text-white">{lesson.title}</h1>
           </div>
+          {lesson.description && (
+            <p className="text-lg text-white/70 mb-6">{lesson.description}</p>
+          )}
         </div>
       </div>
 
       {/* Видео */}
-      <div className="mb-6">
-        <div className="glass-card p-6 rounded-2xl border border-cyan-400/35 shadow-[0_0_12px_rgba(0,180,255,0.18),0_0_28px_rgba(0,180,255,0.08)] hover:shadow-[0_0_14px_rgba(0,180,255,0.24),0_0_34px_rgba(0,180,255,0.12)] hover:-translate-y-0.5 transition-all duration-300">
-          {!videoLoaded && (
-            <div className="aspect-video bg-gray-900/50 rounded-lg flex items-center justify-center mb-4">
-              <div className="text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mx-auto mb-4"></div>
-                <p className="text-white/70">Загрузка видео...</p>
+      {lesson.videoUrl && (
+        <div className="mb-6">
+          <div className="glass-card p-6 rounded-2xl border border-cyan-400/35 shadow-[0_0_12px_rgba(0,180,255,0.18),0_0_28px_rgba(0,180,255,0.08)] hover:shadow-[0_0_14px_rgba(0,180,255,0.24),0_0_34px_rgba(0,180,255,0.12)] hover:-translate-y-0.5 transition-all duration-300">
+            {!videoLoaded && (
+              <div className="aspect-video bg-gray-900/50 rounded-lg flex items-center justify-center mb-4">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mx-auto mb-4"></div>
+                  <p className="text-white/70">Загрузка видео...</p>
+                </div>
               </div>
-            </div>
           )}
           
-          <VideoPlayer
-            videoUrl={getYouTubeEmbedUrl(lesson.video_url)}
-            title={lesson.title}
-            onLoad={() => setVideoLoaded(true)}
-            showControls={showVideoControls}
-          />
-          
-          {/* Кнопка для открытия видео в YouTube - вынесена за пределы видео */}
-          <div className="mt-4 flex justify-center">
-            <ButtonCta
-              label="Открыть в YouTube"
-              className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 text-xs"
-              onClick={() => {
-                // Извлекаем ID видео из оригинального URL
-                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/
-                const match = lesson.video_url.match(regExp)
-                if (match && match[2].length === 11) {
-                  window.open(`https://www.youtube.com/watch?v=${match[2]}`, '_blank')
-                }
-              }}
+            <VideoPlayer
+              videoUrl={getYouTubeEmbedUrl(lesson.videoUrl)}
+              title={lesson.title}
+              onLoad={() => setVideoLoaded(true)}
+              showControls={true}
             />
+            
+            {/* Кнопка для открытия видео в YouTube - вынесена за пределы видео */}
+            <div className="mt-4 flex justify-center">
+              <ButtonCta
+                label="Открыть в YouTube"
+                className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 text-xs"
+                onNavigate={() => {
+                  // Извлекаем ID видео из оригинального URL
+                  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/
+                  const match = lesson.videoUrl.match(regExp)
+                  if (match && match[2].length === 11) {
+                    window.open(`https://www.youtube.com/watch?v=${match[2]}`, '_blank')
+                  }
+                }}
+              />
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Дополнительная информация */}
       <div className="mb-6">
         <div className="glass-card p-6 rounded-2xl border border-cyan-400/35 shadow-[0_0_12px_rgba(0,180,255,0.18),0_0_28px_rgba(0,180,255,0.08)] hover:shadow-[0_0_14px_rgba(0,180,255,0.24),0_0_34px_rgba(0,180,255,0.12)] hover:-translate-y-0.5 transition-all duration-300">
           <h3 className="text-lg font-semibold text-white mb-3">💡 Совет</h3>
           <p className="text-white/70">
-            Для лучшего усвоения материала рекомендуем:
+            {(() => {
+              const title = lesson.title.toLowerCase()
+              if (title.includes('упаковка блога')) {
+                return 'Смотри урок с мыслями: что я могу применить прямо сегодня в своём профиле?'
+              } else if (title.includes('система идей')) {
+                return 'Запиши минимум 5 идей для постов во время просмотра.'
+              } else if (title.includes('текстовые рилс')) {
+                return 'Отметь 2–3 крючка из урока и протестируй их в ближайших публикациях.'
+              } else if (title.includes('карусели')) {
+                return 'Выбери одну тему из своих старых постов и продумай, как её превратить в карусель.'
+              } else {
+                return 'Для лучшего усвоения материала рекомендуем просмотреть видео полностью и делать заметки.'
+              }
+            })()
+            }
           </p>
-          <ul className="list-disc list-inside text-white/70 mt-2 space-y-1">
-            <li>Просмотреть видео полностью</li>
-            <li>Делать заметки по ходу просмотра</li>
-            <li>Практиковать полученные знания</li>
-          </ul>
         </div>
       </div>
 
       {/* Навигация между уроками */}
       <div className="flex justify-center">
-        <Link href={`/topics/${lesson.topic_id}`} className="block focus:outline-none">
-          <ButtonCta 
-            label="Вернуться к списку уроков" 
-            icon="←"
-          />
-        </Link>
+        <ButtonCta 
+          label="Вернуться к списку уроков" 
+          icon="←"
+          onNavigate={() => router.push(`/topics/${lesson.topicId}`)}
+        />
       </div>
     </div>
   )

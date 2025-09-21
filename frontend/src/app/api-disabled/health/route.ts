@@ -5,6 +5,10 @@ export async function GET() {
     status: 'ok',
     timestamp: new Date().toISOString(),
     message: 'Server is running'
+  }, {
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8'
+    }
   })
 }
 
@@ -13,5 +17,9 @@ export async function POST() {
     status: 'ok',
     timestamp: new Date().toISOString(),
     message: 'POST request received'
+  }, {
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8'
+    }
   })
 }

@@ -6,7 +6,7 @@ import TelegramWebApp from '@/components/TelegramWebApp'
 import { NavigationDiagnostics } from '@/components/NavigationDiagnostics'
 import { Navigation } from '@/components/Navigation'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ['latin', 'cyrillic'] })
 const orbitron = Orbitron({ subsets: ['latin'], variable: '--font-orbitron' })
 
 export const metadata: Metadata = {
@@ -14,6 +14,7 @@ export const metadata: Metadata = {
   description: 'Образовательная платформа с интерактивными уроками',
   other: {
     'telegram-web-app': 'true',
+    'format-detection': 'telephone=no'
   },
 }
 
@@ -31,10 +32,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="ru">
+    <html lang="ru" suppressHydrationWarning>
       <head>
-        <meta name="telegram-web-app" content="true" />
-        <meta name="format-detection" content="telephone=no" />
         <script src="https://telegram.org/js/telegram-web-app.js"></script>
       </head>
       <body className={`${inter.className} ${orbitron.variable}`}>

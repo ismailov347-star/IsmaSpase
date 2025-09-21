@@ -1,10 +1,4 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
-  "/api/health/route": "app/api/health/route.js",
-  "/ios-debug/page": "app/ios-debug/page.js",
-  "/lessons/[id]/page": "app/lessons/[id]/page.js",
-  "/mobile-test/page": "app/mobile-test/page.js",
-  "/page": "app/page.js",
-  "/test/page": "app/test/page.js",
-  "/topics/[id]/page": "app/topics/[id]/page.js"
+  "/page": "app/page.js"
 }

@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Topic {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  isLocked    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  lessons     Lesson[]
+}
+
+model Lesson {
+  id        Int      @id @default(autoincrement())
+  topicId   Int
+  title     String
+  videoUrl  String?
+  isLocked  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  topic     Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  tips      Tip[]
+  materials Material[]
+  files     LessonFile[]
+}
+
+model Tip {
+  id        Int      @id @default(autoincrement())
+  lessonId  Int
+  title     String
+  content   String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+}
+
+model Material {
+  id          Int      @id @default(autoincrement())
+  lessonId    Int
+  title       String
+  description String?
+  url         String?
+  type        String   // "link", "text", "video", "document"
+  content     String?  // для текстовых материалов
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+}
+
+model LessonFile {
+  id        Int      @id @default(autoincrement())
+  lessonId  Int
+  filename  String
+  originalName String
+  mimeType  String
+  size      Int
+  url       String
+  createdAt DateTime @default(now())
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+}
