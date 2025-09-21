@@ -67,3 +67,15 @@ model LessonFile {
   createdAt DateTime @default(now())
   lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 }
+
+model User {
+  id           Int      @id @default(autoincrement())
+  telegramId   String   @unique
+  firstName    String?
+  lastName     String?
+  username     String?
+  languageCode String?
+  isPremium    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

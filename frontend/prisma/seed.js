@@ -6,6 +6,33 @@ async function main() {
   console.log('🌱 Начинаем seeding базы данных...');
   
   try {
+    // Создаем темы если их нет
+    console.log('📚 Создаем темы...');
+    
+    const topic1 = await prisma.topic.upsert({
+      where: { id: 1 },
+      update: {},
+      create: {
+        id: 1,
+        title: 'Основы веб-разработки',
+        description: 'Изучение основ HTML, CSS и JavaScript',
+        isLocked: false
+      }
+    });
+    
+    const topic2 = await prisma.topic.upsert({
+      where: { id: 2 },
+      update: {},
+      create: {
+        id: 2,
+        title: 'Практикум "Система лёгкого контента"',
+        description: 'Простая и понятная система для развития блога без выгорания и стресса',
+        isLocked: false
+      }
+    });
+    
+    console.log(`✅ Темы созданы: ${topic1.title}, ${topic2.title}`);
+    
     // Удаляем все уроки из темы 2
     console.log('🗑️ Удаляем существующие уроки темы 2...');
     await prisma.lesson.deleteMany({
